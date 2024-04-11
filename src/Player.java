@@ -35,9 +35,9 @@ public class Player extends Entity{
 
     public void getPlayerImage() {
         try {
-            ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/MainShip194.png")));
-            ship2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/MainShip195.png")));
-            ship3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/MainShip196.png")));
+            ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip194.png")));
+            ship2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip195.png")));
+            ship3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip196.png")));
 
             bufferedImages.add(ship1);
             bufferedImages.add(ship2);
