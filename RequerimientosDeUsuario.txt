@@ -1,0 +1,10 @@
+El requerimiento es plantear un Video Juego.
+
+Escenario:
+Nave que viaja por el espacio y se enfrenta con naves enemigas y otros objetos que se atraviesan en el recorrido de la nave.
+Dado:
+Que las naves enemigas pueden dispararle y los demas objetos pueden destruir la nave.
+Cuando:
+La nave principal se vea en la nececidad de defenderse.
+Entonces:
+Puede disparar y realizar movimientos para evadir.
