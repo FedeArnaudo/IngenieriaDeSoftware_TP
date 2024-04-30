@@ -1,8 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable{
-    //  Screen Settings
+    /**
+     * Screen settings
+     */
     final int originalTileSize  = 19;   //  19x19
     final int scale = 3;
     public int tileSize = originalTileSize * scale;  //  57x57
@@ -12,10 +15,16 @@ public class GamePanel extends JPanel implements Runnable{
     final int screenHeight = tileSize * maxScreenRow;
 
     KeyHandler keyHandler = new KeyHandler();
+    /**
+     * Ship Main
+     */
     Player player = new Player(this, keyHandler);
-    Meteor meteor1 = new Meteor(this);
-    Meteor meteor2 = new Meteor(this);
+    /**
+     * Meteoritos
+     */
+    ArrayList<Meteor> meteors = new ArrayList<>();
     TileManager tileManager = new TileManager(this);
+    CollisionChecker collisionChecker = new CollisionChecker(this);
     Thread gameThread;
 
     //  FPS
@@ -30,6 +39,11 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+
+        int meteorsNumber = 6;
+        for(int i = 0; i < meteorsNumber; i++){
+            meteors.add(new Meteor(this));
+        }
     }
 
     public void startGameThread(){
@@ -66,8 +80,21 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void upDate(){
         player.update();
-        meteor1.update();
-        meteor2.update();
+        for (Meteor meteor: meteors){
+            if(meteor.y == -tileSize){
+                for(Meteor meteor1: meteors){
+                    while (true){
+                        if(meteor.equals(meteor1) || (!meteor.equals(meteor1) && meteor.x != meteor1.x)){
+                            break;
+                        }
+                        else if(meteor.x == meteor1.x){
+                            meteor.setDefaultValues();
+                        }
+                    }
+                }
+            }
+            meteor.update();
+        }
     }
 
     public void paintComponent(Graphics graphics){
@@ -81,8 +108,9 @@ public class GamePanel extends JPanel implements Runnable{
             throw new RuntimeException(e);
         }
         player.draw(graphics2D);
-        meteor1.draw(graphics2D);
-        meteor2.draw(graphics2D);
+        for(Meteor meteor: meteors){
+            meteor.draw(graphics2D);
+        }
 
         timer = System.nanoTime() - timer;
         if(timer > 1000000000){

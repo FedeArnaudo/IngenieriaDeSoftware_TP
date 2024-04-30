@@ -2,19 +2,23 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 public class Meteor extends Entity{
-    private GamePanel gamePanel;
-    private ArrayList<BufferedImage> bufferedImages;
-    private Random random;
+    private final GamePanel gamePanel;
+    private final ArrayList<BufferedImage> bufferedImages;
+    private final SecureRandom random ;
 
     public Meteor(GamePanel gamePanel){
         this.gamePanel = gamePanel;
+        random = new SecureRandom();
+        collisionOn = true;
         bufferedImages = new ArrayList<>();
-        random = new Random();
+        solidRectangle = new Rectangle(18, 36, 20, 20);
+        solidAreaDefaultX = solidRectangle.x;
+        solidAreaDefaultY = solidRectangle.y;
         setDefaultValues();
         getMeteorImage();
 
@@ -25,9 +29,9 @@ public class Meteor extends Entity{
     }
 
     public void setDefaultValues(){
-        x = random.nextInt((gamePanel.screenWidth - gamePanel.tileSize));
-        y = 0;
-        speed = random.nextInt(4) + 2;
+        x = random.nextInt(gamePanel.maxScreenCol) * gamePanel.tileSize;
+        y = - gamePanel.tileSize;
+        speed = random.nextInt(8) + 2;
         direction = "down";
     }
 
