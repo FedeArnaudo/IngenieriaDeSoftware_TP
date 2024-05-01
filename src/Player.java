@@ -18,8 +18,11 @@ public class Player extends Entity{
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         random = new Random();
+        collisionOn = true;
         bufferedImages = new ArrayList<>();
-        solidArea = new Rectangle(0, 0, gamePanel.tileSize, gamePanel.tileSize);
+        solidRectangle = new Rectangle(2, 5, (gamePanel.tileSize - 2), (gamePanel.tileSize - 5));
+        solidAreaDefaultX = solidRectangle.x;
+        solidAreaDefaultY = solidRectangle.y;
         setDefaultValues();
         getPlayerImage();
     }
@@ -29,8 +32,8 @@ public class Player extends Entity{
     public void setDefaultValues(){
         x = 400;
         y = 850;
-        speed = 4;
-        direction = "left";
+        speed = 6;
+        direction = "up";
     }
 
     public void getPlayerImage() {
@@ -38,10 +41,14 @@ public class Player extends Entity{
             ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip194.png")));
             ship2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip195.png")));
             ship3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip196.png")));
+            ship4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip197.png")));
+            ship5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip198.png")));
 
             bufferedImages.add(ship1);
             bufferedImages.add(ship2);
             bufferedImages.add(ship3);
+            bufferedImages.add(ship4);
+            bufferedImages.add(ship5);
         }
         catch (IOException e){
             e.printStackTrace();
@@ -59,6 +66,9 @@ public class Player extends Entity{
             if(x < (gamePanel.screenWidth - gamePanel.tileSize)){
                 x += speed;
             }
+        }
+        else {
+            direction = "up";
         }
     }
 
