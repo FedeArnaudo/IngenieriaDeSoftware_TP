@@ -4,8 +4,8 @@ public class CollisionChecker {
         this.gamePanel = gamePanel;
     }
 
-    public  int checkObjects(Entity entity, boolean player){
-        int id = 0;
+    public boolean checkObjects(Entity entity){
+        boolean collision = false;
         for(Meteor meteor: gamePanel.meteors){
             if(meteor != null){
                 entity.solidRectangle.x = entity.x + entity.solidRectangle.x;
@@ -18,36 +18,21 @@ public class CollisionChecker {
                     case "up":
                         if(entity.solidRectangle.intersects(meteor.solidRectangle)){
                             System.out.println("Tenemos una colision de frente");
-                            if(player){
-                                id = 1;
-                            }
-                            else {
-                                id = 2;
-                            }
+                            collision = true;
                         }
                         break;
                     case "left":
                         entity.solidRectangle.x -= entity.speed;
                         if(entity.solidRectangle.intersects(meteor.solidRectangle)){
                             System.out.println("Tenemos una colision a la izquierda");
-                            if(player){
-                                id = 1;
-                            }
-                            else {
-                                id = 2;
-                            }
+                            collision = true;
                         }
                         break;
                     case "right":
                         entity.solidRectangle.x += entity.speed;
                         if(entity.solidRectangle.intersects(meteor.solidRectangle)){
                             System.out.println("Tenemos una colision a la derecha");
-                            if(player){
-                                id = 1;
-                            }
-                            else {
-                                id = 2;
-                            }
+                            collision = true;
                         }
                         break;
                 }
@@ -58,6 +43,6 @@ public class CollisionChecker {
                 meteor.solidRectangle.y = meteor.solidAreaDefaultY;
             }
         }
-        return id;
+        return collision;
     }
 }

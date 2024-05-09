@@ -80,26 +80,30 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void upDate(){
         player.update();
-        for (Meteor meteor: meteors){
-            if(meteor.y == -tileSize){
-                for(Meteor meteor1: meteors){
-                    while (true){
-                        if(meteor.equals(meteor1) || (!meteor.equals(meteor1) && meteor.x != meteor1.x)){
-                            break;
-                        }
-                        else if(meteor.x == meteor1.x){
-                            meteor.setDefaultValues();
+        try{
+            for (Meteor meteor: meteors){
+                if(meteor.y == -tileSize){
+                    for(Meteor meteor1: meteors){
+                        while (true){
+                            if(meteor.equals(meteor1) || (!meteor.equals(meteor1) && meteor.x != meteor1.x)){
+                                break;
+                            }
+                            else if(meteor.x == meteor1.x){
+                                meteor.setDefaultValues();
+                            }
                         }
                     }
                 }
+                meteor.update();
             }
-            meteor.update();
+        }
+        catch (NullPointerException e){
+            System.out.println("Objeto null");
         }
     }
 
     public void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
-
         Graphics2D  graphics2D = (Graphics2D) graphics;
 
         try {
@@ -107,9 +111,16 @@ public class GamePanel extends JPanel implements Runnable{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         player.draw(graphics2D);
+
         for(Meteor meteor: meteors){
-            meteor.draw(graphics2D);
+            try{
+                meteor.draw(graphics2D);
+            }
+            catch (NullPointerException e){
+                System.out.println("Objeto null");
+            }
         }
 
         timer = System.nanoTime() - timer;

@@ -72,7 +72,7 @@ public class Player extends Entity{
         }
 
         //Check object collision
-        gamePanel.collisionChecker.checkObjects(this, true);
+        gamePanel.collisionChecker.checkObjects(this);
 
     }
 

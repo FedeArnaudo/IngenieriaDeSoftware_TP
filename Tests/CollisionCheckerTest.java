@@ -28,28 +28,28 @@ public class CollisionCheckerTest {
 
     @Test
     public void collisionProve(){
-
-
         CollisionChecker collisionChecker = new CollisionChecker(gamePanel);
-
         Entity entity = gamePanel.player;
-        Entity entity2 = new Meteor(gamePanel);
 
-        boolean player = true;
-        int type = 0;
+        boolean collision = false;
 
-        while (type == 0){
-            type = collisionChecker.checkObjects(entity, player);
+        while (!collision){
+            collision = collisionChecker.checkObjects(entity);
         }
 
-        if(player){
-            assertEquals(1, type);
-        }
-        else {
-            assertEquals(2, type);
-        }
+        assertTrue(collision);
 
+    }
 
+    @Test
+    public void meteorNullCollision(){
+        CollisionChecker collisionChecker = new CollisionChecker(gamePanel);
+        Entity entity = gamePanel.player;
+        Meteor meteor = null;
+        gamePanel.meteors.add(meteor);
 
+        boolean collision = collisionChecker.checkObjects(entity);
+
+        assertFalse(collision);
     }
 }
