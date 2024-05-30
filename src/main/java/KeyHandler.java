@@ -1,12 +1,13 @@
+package main.java;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean leftPressed, rightPressed;
+    public boolean leftPressed, rightPressed, spacePressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     @Override
@@ -19,6 +20,9 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_RIGHT){
             rightPressed = true;
         }
+        if(code == KeyEvent.VK_SPACE){
+            spacePressed = true;
+        }
     }
 
     @Override
@@ -30,6 +34,9 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_RIGHT){
             rightPressed = false;
+        }
+        if(code == KeyEvent.VK_SPACE){
+            spacePressed = false;
         }
     }
 }
