@@ -15,7 +15,7 @@ public class GamePanel extends JPanel implements Runnable{
     private static final int MAX_SCREEN_ROW = 16;
     private static final int FPS = 60;
     private static final int METEORS_NUMBER = 6;
-    private static final int SHIPS_BULLETS_CAPACITY = 100;
+    private static final int SHIPS_BULLETS_CAPACITY = 1000;
 
     private final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;
     private final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;

@@ -4,7 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean leftPressed, rightPressed, spacePressed;
+    public boolean leftPressed, rightPressed, spacePressed, wPressed;
+    public boolean bulletFiredInCurrentKeyPress;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -23,6 +24,9 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_SPACE){
             spacePressed = true;
         }
+        if(code == KeyEvent.VK_W){
+            wPressed = true;
+        }
     }
 
     @Override
@@ -37,6 +41,10 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_SPACE){
             spacePressed = false;
+            bulletFiredInCurrentKeyPress = false;
+        }
+        if(code == KeyEvent.VK_W){
+            wPressed = false;
         }
     }
 }
