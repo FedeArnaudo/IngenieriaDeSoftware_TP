@@ -15,6 +15,7 @@ public class GamePanel extends JPanel implements Runnable{
     private static final int MAX_SCREEN_ROW = 16;
     private static final int FPS = 60;
     private static final int METEORS_NUMBER = 6;
+    private static final int SCOREBOARD_NUMBERS = 6;
     private static final int SHIPS_BULLETS_CAPACITY = 100;
 
     private final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;
@@ -35,6 +36,11 @@ public class GamePanel extends JPanel implements Runnable{
      * This object represents the meteors that travel vertically across the map.
      */
     ArrayList<Meteor> meteors = new ArrayList<>();
+
+    /**
+     * This object is used to manage the scoreboard numbers.
+     */
+    ArrayList<ScoreboardNumber> scoreboardNumbers = new ArrayList<>();
 
     /**
      * This object is used to manage the tiles that are drawn on the screen.
@@ -58,11 +64,18 @@ public class GamePanel extends JPanel implements Runnable{
         this.setFocusable(true);
 
         initializeMeteors();
+        initializeScoreboardNumbers();
     }
 
     private void initializeMeteors() {
         for(int i = 0; i < METEORS_NUMBER; i++){
             meteors.add(new Meteor(this));
+        }
+    }
+
+    private void initializeScoreboardNumbers() {
+        for(int i = 0; i < SCOREBOARD_NUMBERS; i++){
+            scoreboardNumbers.add(new ScoreboardNumber(this, ship, i));
         }
     }
 
@@ -92,6 +105,7 @@ public class GamePanel extends JPanel implements Runnable{
     private void updateGame() {
         updatePlayer();
         updateMeteors();
+        updateScoreboardNumbers();
     }
 
     private void updatePlayer() {
@@ -104,6 +118,12 @@ public class GamePanel extends JPanel implements Runnable{
                 resetMeteorPosition(meteor);
             }
             meteor.update();
+        }
+    }
+
+    private void updateScoreboardNumbers() {
+        for (ScoreboardNumber scoreboardNumber: scoreboardNumbers){
+            scoreboardNumber.update();
         }
     }
 
@@ -159,6 +179,10 @@ public class GamePanel extends JPanel implements Runnable{
 
         for(Meteor meteor: meteors){
             meteor.draw(graphics2D);
+        }
+
+        for(ScoreboardNumber scoreboardNumber: scoreboardNumbers){
+            scoreboardNumber.draw(graphics2D);
         }
     }
 

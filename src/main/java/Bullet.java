@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -83,7 +84,10 @@ public class Bullet extends Entity{
         if (!shootFlag) {
             x = ship.getX();
             y = ship.getY();
-            direction = "up";
+        } else if (y < 0) {
+            shootFlag = false;
+            x = ship.getX();
+            y = ship.getY();
         }
     }
 

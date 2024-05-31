@@ -22,11 +22,14 @@ public class Ship extends Entity{
     public int bulletsCapacity;
     public int bulletFired;
 
+    private int score;
+
     public Ship(GamePanel gamePanel, KeyHandler keyHandler, int bulletsCapacity){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.bulletsCapacity = bulletsCapacity;
 
+        score = 0;
         random = new Random();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
@@ -86,6 +89,7 @@ public class Ship extends Entity{
         handleShooting();
         updateBullets();
         handleMovement();
+        resetScore();
     }
 
     private void handleShooting() {
@@ -127,6 +131,12 @@ public class Ship extends Entity{
         x += getSpeed();
     }
 
+    private void resetScore() {
+        if (score > 999999) {
+            score = 0;
+        }
+    }
+
     @Override
     public void draw(Graphics2D graphics2D){
         drawBullets(graphics2D);
@@ -155,5 +165,9 @@ public class Ship extends Entity{
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    public int getScore() {
+        return score;
     }
 }
