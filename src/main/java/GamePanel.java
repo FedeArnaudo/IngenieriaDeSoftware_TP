@@ -3,6 +3,12 @@ package main.java;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -49,6 +55,11 @@ public class GamePanel extends JPanel implements Runnable{
     private double timer = 0;
     private int drawCount = 0;
 
+    private boolean welcomeScreen = true;
+    private Map<Character, BufferedImage> letterImages = new HashMap<>();
+    private double floatTime = 0;
+
+    private boolean isPaused = false;
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -56,6 +67,8 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+
+        loadLetterImages();
 
         initializeMeteors();
     }
@@ -72,12 +85,34 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     @Override
-    public void run(){
+    public void run() {
         double drawInterval = calculateDrawInterval();
         double nextDrawTime = System.nanoTime() + drawInterval;
 
-        while (gameThread != null){
-            updateGame();
+        while (gameThread != null) {
+            if (!welcomeScreen) {
+                if (keyHandler.getPPressed() && !isPaused) {
+                    isPaused = true;
+                    keyHandler.setPPressed(false);
+                } else if (keyHandler.getPPressed() && isPaused) {
+                    isPaused = false;
+                    keyHandler.setPPressed(false);
+                }
+            }
+
+            if (!isPaused) {
+                if (keyHandler.getEnterPressed() && welcomeScreen) {
+                    welcomeScreen = false;
+                    keyHandler.setEnterPressed(false);
+                }
+
+                if (!welcomeScreen) {
+                    updateGame();
+                }
+            }
+
+            floatTime += 0.05;
+
             repaint();
             drawCount++;
 
@@ -139,12 +174,18 @@ public class GamePanel extends JPanel implements Runnable{
         return nextDrawTime + drawInterval;
     }
 
-    public void paintComponent(Graphics graphics){
+
+    public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
 
-        Graphics2D  graphics2D = (Graphics2D) graphics;
+        Graphics2D graphics2D = (Graphics2D) graphics;
 
-        drawGameElements(graphics2D);
+        if (isPaused) {
+            drawPauseScreen(graphics2D);
+        } else {
+            drawGameElements(graphics2D);
+        }
+
         updateFPSCounter(graphics2D);
     }
 
@@ -155,22 +196,90 @@ public class GamePanel extends JPanel implements Runnable{
             throw new RuntimeException(e);
         }
 
-        ship.draw(graphics2D);
+        if (welcomeScreen){
+            drawWelcomeScreen(graphics2D);
+        }
+        else {
+            ship.draw(graphics2D);
 
-        for(Meteor meteor: meteors){
-            meteor.draw(graphics2D);
+            for(Meteor meteor: meteors){
+                meteor.draw(graphics2D);
+            }
         }
     }
 
     private void updateFPSCounter(Graphics2D graphics2D) {
         timer = System.nanoTime() - timer;
         if(timer > 1000000000){
-            graphics2D.setFont(new Font("Arial", Font.PLAIN, 10));
-            graphics2D.drawString("FPS: " + drawCount, 750, 30);
-            graphics2D.dispose();
+            //graphics2D.setFont(new Font("Arial", Font.PLAIN, 10));
+            //graphics2D.drawString("FPS: " + drawCount, 750, 30);
+            //graphics2D.dispose();
             drawCount = 0;
             timer = 0;
         }
+    }
+
+    private void loadLetterImages() {
+        try {
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/letters/letter_" + ch + ".png")));
+                letterImages.put(ch, img);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load letter images", e);
+        }
+    }
+
+    private void drawWelcomeScreen(Graphics2D graphics2D) {
+        String word = "spaceships";
+        int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
+        int y = 350;
+
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            BufferedImage img = letterImages.get(ch);
+            if (img != null) {
+                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
+                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
+            }
+        }
+
+        // Draw the "press enter to play" text
+        String enterText = "PRESS ENTER TO PLAY";
+        Font font = new Font("Courier New", Font.PLAIN, 20);
+        graphics2D.setFont(font);
+        FontMetrics metrics = graphics2D.getFontMetrics(font);
+        int x = (getScreenWidth() - metrics.stringWidth(enterText)) / 2;
+        int yEnterText = (int)(getScreenHeight() * 0.75);
+        graphics2D.setColor(Color.WHITE);
+        graphics2D.drawString(enterText, x, yEnterText);
+    }
+
+    private void drawPauseScreen(Graphics2D graphics2D) {
+        graphics2D.setColor(Color.decode("#000422"));
+        graphics2D.fillRect(0, 0, getScreenWidth(), getScreenHeight());
+
+        String word = "pause";
+        int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
+        int y = (int)(getScreenHeight() * 0.39);
+
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            BufferedImage img = letterImages.get(ch);
+            if (img != null) {
+                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
+                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
+            }
+        }
+
+        String enterText = "PRESS P TO RESUME";
+        Font font = new Font("Courier New", Font.PLAIN, 20);
+        graphics2D.setFont(font);
+        FontMetrics metrics = graphics2D.getFontMetrics(font);
+        int x = (getScreenWidth() - metrics.stringWidth(enterText)) / 2;
+        int yEnterText = (int)(getScreenHeight() * 0.75);
+        graphics2D.setColor(Color.WHITE);
+        graphics2D.drawString(enterText, x, yEnterText);
     }
 
     public static int getOriginalTileSize() {

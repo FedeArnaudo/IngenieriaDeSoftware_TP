@@ -89,9 +89,9 @@ public class Ship extends Entity{
     }
 
     private void handleShooting() {
-        if (keyHandler.spacePressed && bulletFired < bulletsCapacity) {
+        if (keyHandler.getSpacePressed() && bulletFired < bulletsCapacity) {
             shoot();
-            keyHandler.spacePressed = false;
+            keyHandler.setSpacePressed(false);
         }
     }
 
@@ -102,14 +102,14 @@ public class Ship extends Entity{
     }
 
     private void handleMovement() {
-        if(keyHandler.leftPressed){
+        if(keyHandler.getLeftPressed()){
             direction = "left";
             if(getX() > 0) {
                 moveLeft();
             }
         }
 
-        else if (keyHandler.rightPressed) {
+        else if (keyHandler.getRightPressed()) {
             direction = "right";
             if(getX() < (gamePanel.getScreenWidth() - gamePanel.getTileSize())){
                 moveRight();
