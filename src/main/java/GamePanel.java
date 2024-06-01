@@ -1,8 +1,12 @@
 package main.java;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -38,11 +42,6 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<Meteor> meteors = new ArrayList<>();
 
     /**
-     * This object is used to manage the scoreboard numbers.
-     */
-    ArrayList<ScoreboardNumber> scoreboardNumbers = new ArrayList<>();
-
-    /**
      * This object is used to manage the tiles that are drawn on the screen.
      */
     TileManager tileManager = new TileManager(this);
@@ -55,6 +54,8 @@ public class GamePanel extends JPanel implements Runnable{
     private double timer = 0;
     private int drawCount = 0;
 
+    private ArrayList<BufferedImage> numberImages = new ArrayList<>();
+
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -63,19 +64,21 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
 
+        try {
+            for (int i = 0; i <= 9; i++) {
+                BufferedImage numberImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/numbers/number_" + i + ".png")));
+                numberImages.add(numberImage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         initializeMeteors();
-        initializeScoreboardNumbers();
     }
 
     private void initializeMeteors() {
         for(int i = 0; i < METEORS_NUMBER; i++){
             meteors.add(new Meteor(this));
-        }
-    }
-
-    private void initializeScoreboardNumbers() {
-        for(int i = 0; i < SCOREBOARD_NUMBERS; i++){
-            scoreboardNumbers.add(new ScoreboardNumber(this, ship, i));
         }
     }
 
@@ -105,7 +108,6 @@ public class GamePanel extends JPanel implements Runnable{
     private void updateGame() {
         updatePlayer();
         updateMeteors();
-        updateScoreboardNumbers();
     }
 
     private void updatePlayer() {
@@ -118,12 +120,6 @@ public class GamePanel extends JPanel implements Runnable{
                 resetMeteorPosition(meteor);
             }
             meteor.update();
-        }
-    }
-
-    private void updateScoreboardNumbers() {
-        for (ScoreboardNumber scoreboardNumber: scoreboardNumbers){
-            scoreboardNumber.update();
         }
     }
 
@@ -165,6 +161,7 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D  graphics2D = (Graphics2D) graphics;
 
         drawGameElements(graphics2D);
+        drawScore(graphics2D);
         updateFPSCounter(graphics2D);
     }
 
@@ -180,10 +177,6 @@ public class GamePanel extends JPanel implements Runnable{
         for(Meteor meteor: meteors){
             meteor.draw(graphics2D);
         }
-
-        for(ScoreboardNumber scoreboardNumber: scoreboardNumbers){
-            scoreboardNumber.draw(graphics2D);
-        }
     }
 
     private void updateFPSCounter(Graphics2D graphics2D) {
@@ -194,6 +187,21 @@ public class GamePanel extends JPanel implements Runnable{
             graphics2D.dispose();
             drawCount = 0;
             timer = 0;
+        }
+    }
+
+    public void drawScore(Graphics2D graphics2D) {
+        String scoreString = String.format("%06d", ship.getScore());
+        int padding = 20; // padding from the corner
+        int sizeMultiplier = 2; // make the score bigger
+        int x = getScreenWidth() - (numberImages.get(0).getWidth() * sizeMultiplier * scoreString.length()) - padding;
+        int y = padding;
+
+        for (char c : scoreString.toCharArray()) {
+            int number = Character.getNumericValue(c);
+            BufferedImage numberImage = numberImages.get(number);
+            graphics2D.drawImage(numberImage, x, y, numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
+            x += numberImage.getWidth() * sizeMultiplier;
         }
     }
 

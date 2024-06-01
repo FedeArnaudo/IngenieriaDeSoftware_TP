@@ -82,6 +82,7 @@ public class Ship extends Entity{
     public void shoot(){
         bulletFired++;
         bullets.get(bulletFired-1).shootFlag = true;
+        score++;
     }
 
     @Override
