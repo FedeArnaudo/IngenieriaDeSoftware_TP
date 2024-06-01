@@ -57,6 +57,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     private boolean welcomeScreen = true;
     private Map<Character, BufferedImage> letterImages = new HashMap<>();
+    private double floatTime = 0;
 
     private boolean isPaused = false;
 
@@ -90,25 +91,27 @@ public class GamePanel extends JPanel implements Runnable{
 
         while (gameThread != null) {
             if (!welcomeScreen) {
-                if (keyHandler.pPressed && !isPaused) {
+                if (keyHandler.getPPressed() && !isPaused) {
                     isPaused = true;
-                    keyHandler.pPressed = false;
-                } else if (keyHandler.pPressed && isPaused) {
+                    keyHandler.setPPressed(false);
+                } else if (keyHandler.getPPressed() && isPaused) {
                     isPaused = false;
-                    keyHandler.pPressed = false;
+                    keyHandler.setPPressed(false);
                 }
             }
 
             if (!isPaused) {
-                if (keyHandler.enterPressed && welcomeScreen) {
+                if (keyHandler.getEnterPressed() && welcomeScreen) {
                     welcomeScreen = false;
-                    keyHandler.enterPressed = false;
+                    keyHandler.setEnterPressed(false);
                 }
 
                 if (!welcomeScreen) {
                     updateGame();
                 }
             }
+
+            floatTime += 0.05;
 
             repaint();
             drawCount++;
@@ -236,7 +239,8 @@ public class GamePanel extends JPanel implements Runnable{
             char ch = word.charAt(i);
             BufferedImage img = letterImages.get(ch);
             if (img != null) {
-                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y, img.getWidth() * 2, img.getHeight() * 2, null);
+                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
+                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
             }
         }
 
@@ -263,7 +267,8 @@ public class GamePanel extends JPanel implements Runnable{
             char ch = word.charAt(i);
             BufferedImage img = letterImages.get(ch);
             if (img != null) {
-                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y, img.getWidth() * 2, img.getHeight() * 2, null); // Scale the image
+                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
+                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
             }
         }
 

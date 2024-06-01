@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean leftPressed, rightPressed, spacePressed, enterPressed, pPressed;
+    private boolean leftPressed, rightPressed, spacePressed, enterPressed, pPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -50,5 +50,45 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_P){
             pPressed = false;
         }
+    }
+
+    public boolean  getLeftPressed() {
+        return leftPressed;
+    }
+
+    public boolean  getRightPressed() {
+        return rightPressed;
+    }
+
+    public boolean  getSpacePressed() {
+        return spacePressed;
+    }
+
+    public boolean  getEnterPressed() {
+        return enterPressed;
+    }
+
+    public boolean  getPPressed() {
+        return pPressed;
+    }
+
+    public void setLeftPressed(boolean leftPressed) {
+        this.leftPressed = leftPressed;
+    }
+
+    public void setRightPressed(boolean rightPressed) {
+        this.rightPressed = rightPressed;
+    }
+
+    public void setSpacePressed(boolean spacePressed) {
+        this.spacePressed = spacePressed;
+    }
+
+    public void setEnterPressed(boolean enterPressed) {
+        this.enterPressed = enterPressed;
+    }
+
+    public void setPPressed(boolean pPressed) {
+        this.pPressed = pPressed;
     }
 }
