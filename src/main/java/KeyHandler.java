@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean leftPressed, rightPressed, spacePressed;
+    public boolean leftPressed, rightPressed, spacePressed, enterPressed, pPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -23,6 +23,12 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_SPACE){
             spacePressed = true;
         }
+        if(code == KeyEvent.VK_ENTER){
+            enterPressed = true;
+        }
+        if(code == KeyEvent.VK_P){
+            pPressed = true;
+        }
     }
 
     @Override
@@ -37,6 +43,12 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_SPACE){
             spacePressed = false;
+        }
+        if(code == KeyEvent.VK_ENTER){
+            enterPressed = false;
+        }
+        if(code == KeyEvent.VK_P){
+            pPressed = false;
         }
     }
 }
