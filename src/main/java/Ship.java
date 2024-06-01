@@ -22,11 +22,13 @@ public class Ship extends Entity{
     public int bulletsCapacity;
     public int bulletFired;
 
+    private int lives;
     private int score;
 
-    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int bulletsCapacity){
+    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
+        this.lives = lives;
         this.bulletsCapacity = bulletsCapacity;
 
         score = 0;
@@ -82,7 +84,6 @@ public class Ship extends Entity{
     public void shoot(){
         bulletFired++;
         bullets.get(bulletFired-1).shootFlag = true;
-        score++;
     }
 
     @Override
@@ -170,5 +171,9 @@ public class Ship extends Entity{
 
     public int getScore() {
         return score;
+    }
+
+    public int getLives() {
+        return lives;
     }
 }
