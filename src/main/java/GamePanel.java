@@ -94,7 +94,24 @@ public class GamePanel extends JPanel implements Runnable{
         this.setFocusable(true);
 
         loadLetterImages();
+        loadNumberImages();
+        loadBulletScoreboardImage();
+        loadLiveImage();
+        initializeMeteors();
+    }
 
+    private void loadLetterImages() {
+        try {
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/letters/letter_" + ch + ".png")));
+                letterImages.put(ch, img);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load letter images", e);
+        }
+    }
+
+    private void loadNumberImages() {
         try {
             for (int i = 0; i <= 9; i++) {
                 BufferedImage numberImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/numbers/number_" + i + ".png")));
@@ -103,20 +120,22 @@ public class GamePanel extends JPanel implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private void loadBulletScoreboardImage() {
         try {
             bulletScoreboardImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/scoreboard/bullet_scoreboard.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private void loadLiveImage() {
         try {
             liveImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/lives/live.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        initializeMeteors();
     }
 
     private void initializeMeteors() {
@@ -251,17 +270,6 @@ public class GamePanel extends JPanel implements Runnable{
             drawScore(graphics2D);
             drawBulletsLeft(graphics2D);
             drawLives(graphics2D);
-        }
-    }
-
-    private void loadLetterImages() {
-        try {
-            for (char ch = 'a'; ch <= 'z'; ch++) {
-                BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/letters/letter_" + ch + ".png")));
-                letterImages.put(ch, img);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load letter images", e);
         }
     }
 
