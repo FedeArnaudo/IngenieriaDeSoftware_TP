@@ -25,19 +25,19 @@ public class ShipTest {
     public void shootingWhenSpacePressed() {
         when(keyHandler.getSpacePressed()).thenReturn(true);
         ship.update();
-        Assertions.assertEquals(1, ship.bulletFired);
+        Assertions.assertEquals(1, ship.getBulletFired());
     }
 
     @Test
     public void notShootingWhenSpaceNotPressed() {
         when(keyHandler.getSpacePressed()).thenReturn(false);
         ship.update();
-        Assertions.assertEquals(0, ship.bulletFired);
+        Assertions.assertEquals(0, ship.getBulletFired());
     }
 
     @Test
     public void notShootingWhenBulletCapacityReached() {
-        ship.bulletFired = ship.bulletsCapacity;
+        ship.setBulletFired(ship.getBulletsCapacity());
 
         when(keyHandler.getSpacePressed()).thenReturn(true);
 
@@ -47,7 +47,7 @@ public class ShipTest {
         Assertions.assertTrue(keyHandler.getSpacePressed());
 
         // Verify that bulletFired has not increased
-        Assertions.assertEquals(ship.bulletsCapacity, ship.bulletFired);
+        Assertions.assertEquals(ship.getBulletsCapacity(), ship.getBulletFired());
     }
 
     @Test

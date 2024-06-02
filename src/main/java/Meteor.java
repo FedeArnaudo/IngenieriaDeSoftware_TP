@@ -26,7 +26,7 @@ public class Meteor extends Entity{
         getMeteorImage();
     }
 
-    public ArrayList<BufferedImage> getBufferedImages() {
+    private ArrayList<BufferedImage> getBufferedImages() {
         return bufferedImages;
     }
 
@@ -37,7 +37,7 @@ public class Meteor extends Entity{
         direction = "down";
     }
 
-    public void getMeteorImage() {
+    private void getMeteorImage() {
         try {
             BufferedImage meteor1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/meteor/meteor1.png")));
             BufferedImage meteor2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/meteor/meteor2.png")));

@@ -32,14 +32,14 @@ public class BulletTest {
         field.setAccessible(true);
         field.set(bullet, 850);
         int initialY = bullet.getY();
-        bullet.shootFlag = true;
+        bullet.setShootFlag(true);
         bullet.update();
         Assertions.assertEquals(initialY - bullet.getSpeed(), bullet.getY());
     }
 
     @Test
     public void bulletResetsPositionWhenNotShot() {
-        bullet.shootFlag = false;
+        bullet.setShootFlag(false);
         bullet.update();
         Assertions.assertEquals(ship.getX(), bullet.getX());
         Assertions.assertEquals(ship.getY(), bullet.getY());

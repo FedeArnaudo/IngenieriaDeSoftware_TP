@@ -317,7 +317,7 @@ public class GamePanel extends JPanel implements Runnable{
         graphics2D.drawString(enterText, x, yEnterText);
     }
 
-    public void drawScore(Graphics2D graphics2D) {
+    private void drawScore(Graphics2D graphics2D) {
         String scoreString = String.format("%06d", ship.getScore());
         int padding = 20; // padding from the corner
         int sizeMultiplier = 2; // make the score bigger
@@ -331,8 +331,8 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    public void drawBulletsLeft(Graphics2D graphics2D) {
-        int bulletsLeft = ship.bulletsCapacity - ship.bulletFired;
+    private void drawBulletsLeft(Graphics2D graphics2D) {
+        int bulletsLeft = ship.getBulletsCapacity() - ship.getBulletFired();
         String bulletsLeftString = String.format("%d", bulletsLeft);
         int x_padding = 40;
         int y_padding = 20;
@@ -353,7 +353,7 @@ public class GamePanel extends JPanel implements Runnable{
         graphics2D.drawImage(bulletScoreboardImage, imageX, imageY, null);
     }
 
-    public void drawLives(Graphics2D graphics2D) {
+    private void drawLives(Graphics2D graphics2D) {
         int padding = 30; // padding from the corner
         int x = padding;
 

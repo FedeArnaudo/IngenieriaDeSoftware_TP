@@ -15,7 +15,7 @@ public class Bullet extends Entity{
 
     private final ArrayList<BufferedImage> bufferedImages;
     private final Random random;
-    public boolean shootFlag;
+    private boolean shootFlag;
 
     public Bullet(GamePanel gamePanel, KeyHandler keyHandler, Ship ship){
         this.gamePanel = gamePanel;
@@ -33,18 +33,18 @@ public class Bullet extends Entity{
         getBulletImage();
     }
 
-    public ArrayList<BufferedImage> getBufferedImages() {
+    private ArrayList<BufferedImage> getBufferedImages() {
         return bufferedImages;
     }
 
-    public void setDefaultValues(){
+    private void setDefaultValues(){
         x = ship.getX();
         y = ship.getY();
         speed = 12;
         direction = "up";
     }
 
-    public void getBulletImage() {
+    private void getBulletImage() {
         try {
             BufferedImage bullet1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet1.png")));
             BufferedImage bullet2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet2.png")));
@@ -111,5 +111,13 @@ public class Bullet extends Entity{
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    public boolean getShootFlag() {
+        return shootFlag;
+    }
+
+    public void setShootFlag(boolean shootFlag) {
+        this.shootFlag = shootFlag;
     }
 }

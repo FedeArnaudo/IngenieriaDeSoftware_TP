@@ -20,7 +20,7 @@ public class TileManager {
         getTileImage();
     }
 
-    public void getTileImage(){
+    private void getTileImage(){
         try {
             for(int i = 0; i < IMAGES_NUMB; i ++){
                 Tile tile = new Tile();

@@ -19,8 +19,8 @@ public class Ship extends Entity{
      * Variables for bullets
      */
     ArrayList<Bullet> bullets = new ArrayList<>();
-    public int bulletsCapacity;
-    public int bulletFired;
+    private int bulletsCapacity;
+    private int bulletFired;
 
     /**
      * Variables for player
@@ -49,11 +49,11 @@ public class Ship extends Entity{
         getPlayerImage();
     }
 
-    public ArrayList<BufferedImage> getBufferedImages() {
+    private ArrayList<BufferedImage> getBufferedImages() {
         return bufferedImages;
     }
 
-    public void setDefaultValues(){
+    private void setDefaultValues(){
         x = 400;
         y = 850;
         speed = 6;
@@ -67,7 +67,7 @@ public class Ship extends Entity{
         bulletFired = 0;
     }
 
-    public void getPlayerImage() {
+    private void getPlayerImage() {
         try {
             BufferedImage ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip194.png")));
             BufferedImage ship2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip195.png")));
@@ -127,7 +127,7 @@ public class Ship extends Entity{
         }
     }
 
-    public void setShootingStrategy(ShootingStrategy shootingStrategy) {
+    private void setShootingStrategy(ShootingStrategy shootingStrategy) {
         this.shootingStrategy = shootingStrategy;
     }
 
@@ -180,5 +180,21 @@ public class Ship extends Entity{
 
     public int getLives() {
         return lives;
+    }
+
+    public int getBulletsCapacity() {
+        return bulletsCapacity;
+    }
+
+    public int getBulletFired() {
+        return bulletFired;
+    }
+
+    public void increaseBulletFired(int bulletFired) {
+        this.bulletFired += bulletFired;
+    }
+
+    public void setBulletFired(int bulletFired) {
+        this.bulletFired = bulletFired;
     }
 }

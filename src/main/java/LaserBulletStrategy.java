@@ -3,15 +3,15 @@ package main.java;
 public class LaserBulletStrategy implements ShootingStrategy {
     @Override
     public void shoot(Ship ship) {
-        if (ship.bulletFired < ship.bulletsCapacity) {
-            ship.bulletFired++;
-            ship.bullets.get(ship.bulletFired-1).shootFlag = true;
+        if (ship.getBulletFired() < ship.getBulletsCapacity()) {
+            ship.increaseBulletFired(1);
+            ship.bullets.get(ship.getBulletFired()-1).setShootFlag(true);
         }
     }
 
     @Override
     public void handleShooting(Ship ship) {
-        if (ship.keyHandler.getSpacePressed() && ship.bulletFired < ship.bulletsCapacity) {
+        if (ship.keyHandler.getSpacePressed() && ship.getBulletFired() < ship.getBulletsCapacity()) {
             shoot(ship);
         }
     }
