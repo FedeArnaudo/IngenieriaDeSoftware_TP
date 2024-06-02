@@ -29,6 +29,9 @@ public class Ship extends Entity{
     private int score;
 
     public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity){
+    private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
+
+    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int bulletsCapacity){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.lives = lives;
@@ -84,30 +87,13 @@ public class Ship extends Entity{
         }
     }
 
-    public void shoot(){
-        bulletFired++;
-        bullets.get(bulletFired-1).shootFlag = true;
-    }
-
     @Override
     public void update(){
-        handleShooting();
-        updateBullets();
+        shootingStrategy.handleShooting(this);
+        shootingStrategy.updateBullets(this);
         handleMovement();
+        changeShootingStrategy();
         resetScore();
-    }
-
-    private void handleShooting() {
-        if (keyHandler.getSpacePressed() && bulletFired < bulletsCapacity) {
-            shoot();
-            keyHandler.setSpacePressed(false);
-        }
-    }
-
-    private void updateBullets() {
-        for (Bullet bullet: bullets){
-            bullet.update();
-        }
     }
 
     private void handleMovement() {
@@ -139,6 +125,23 @@ public class Ship extends Entity{
     private void resetScore() {
         if (score > 999999) {
             score = 0;
+        }
+    }
+
+    public void setShootingStrategy(ShootingStrategy shootingStrategy) {
+        this.shootingStrategy = shootingStrategy;
+    }
+
+    private void changeShootingStrategy() {
+        if (keyHandler.wPressed) {
+            if (shootingStrategy instanceof SingleBulletStrategy) {
+                setShootingStrategy(new DoubleBulletStrategy());
+            } else if (shootingStrategy instanceof DoubleBulletStrategy) {
+                setShootingStrategy(new LaserBulletStrategy());
+            } else {
+                setShootingStrategy(new SingleBulletStrategy());
+            }
+            keyHandler.wPressed = false;
         }
     }
 

@@ -85,9 +85,9 @@ public class Bullet extends Entity{
             x = ship.getX();
             y = ship.getY();
         } else if (y < 0) {
-            shootFlag = false;
             x = ship.getX();
             y = ship.getY();
+            shootFlag = false;
         }
     }
 

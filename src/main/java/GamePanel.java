@@ -219,7 +219,6 @@ public class GamePanel extends JPanel implements Runnable{
         return nextDrawTime + drawInterval;
     }
 
-
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
 
