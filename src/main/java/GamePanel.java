@@ -6,13 +6,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Objects;
+
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -24,14 +21,17 @@ public class GamePanel extends JPanel implements Runnable{
     private static final int MAX_SCREEN_COL = 16;
     private static final int MAX_SCREEN_ROW = 16;
     private static final int FPS = 60;
-    private static final int METEORS_NUMBER = 6;
-    private static final int SCOREBOARD_NUMBERS = 6;
-    private static final int SHIPS_LIVES = 5;
-    private static final int SHIPS_BULLETS_CAPACITY = 100;
 
     private final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;
     private final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;
     private final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW;
+
+    /**
+     * Game Settings
+     */
+    private static final int METEORS_NUMBER = 6;
+    private static final int SHIPS_LIVES = 5;
+    private static final int SHIPS_BULLETS_CAPACITY = 100;
 
     /**
      * This object is used to handle keyboard inputs from the user.
@@ -58,18 +58,32 @@ public class GamePanel extends JPanel implements Runnable{
      */
     Thread gameThread;
 
-    private double timer = 0;
-    private int drawCount = 0;
-
+    /**
+     * Variables for welcome screen
+     */
     private boolean welcomeScreen = true;
-    private Map<Character, BufferedImage> letterImages = new HashMap<>();
+    private final Map<Character, BufferedImage> letterImages = new HashMap<>();
     private double floatTime = 0;
 
+    /**
+     * Variables for pause screen
+     */
     private boolean isPaused = false;
-    private ArrayList<BufferedImage> numberImages = new ArrayList<>();
+
+    /**
+     * Array for scoreboard numbers
+     */
+    private final ArrayList<BufferedImage> numberImages = new ArrayList<>();
+
+    /**
+     * Variables for bullet scoreboard
+     */
     Font arialFont = new Font("Courier", Font.PLAIN, 24);
     private BufferedImage bulletScoreboardImage;
 
+    /**
+     * Variables for lives scoreboard
+     */
     private BufferedImage liveImage;
 
     public GamePanel(){
@@ -146,7 +160,6 @@ public class GamePanel extends JPanel implements Runnable{
             floatTime += 0.05;
 
             repaint();
-            drawCount++;
 
             nextDrawTime = sleepAndCalculateNextDrawTime(drawInterval, nextDrawTime);
         }
@@ -217,11 +230,6 @@ public class GamePanel extends JPanel implements Runnable{
         } else {
             drawGameElements(graphics2D);
         }
-
-        drawScore(graphics2D);
-        drawBulletsLeft(graphics2D);
-        drawLives(graphics2D);
-        updateFPSCounter(graphics2D);
     }
 
     private void drawGameElements(Graphics2D graphics2D) {
@@ -240,17 +248,10 @@ public class GamePanel extends JPanel implements Runnable{
             for(Meteor meteor: meteors){
                 meteor.draw(graphics2D);
             }
-        }
-    }
 
-    private void updateFPSCounter(Graphics2D graphics2D) {
-        timer = System.nanoTime() - timer;
-        if(timer > 1000000000){
-            //graphics2D.setFont(new Font("Arial", Font.PLAIN, 10));
-            //graphics2D.drawString("FPS: " + drawCount, 750, 30);
-            //graphics2D.dispose();
-            drawCount = 0;
-            timer = 0;
+            drawScore(graphics2D);
+            drawBulletsLeft(graphics2D);
+            drawLives(graphics2D);
         }
     }
 
@@ -322,12 +323,11 @@ public class GamePanel extends JPanel implements Runnable{
         int padding = 20; // padding from the corner
         int sizeMultiplier = 2; // make the score bigger
         int x = getScreenWidth() - (numberImages.get(0).getWidth() * sizeMultiplier * scoreString.length()) - padding;
-        int y = padding;
 
         for (char c : scoreString.toCharArray()) {
             int number = Character.getNumericValue(c);
             BufferedImage numberImage = numberImages.get(number);
-            graphics2D.drawImage(numberImage, x, y, numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
+            graphics2D.drawImage(numberImage, x, padding, numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
             x += numberImage.getWidth() * sizeMultiplier;
         }
     }
@@ -357,13 +357,12 @@ public class GamePanel extends JPanel implements Runnable{
     public void drawLives(Graphics2D graphics2D) {
         int padding = 30; // padding from the corner
         int x = padding;
-        int y = padding;
 
         int imageWidth = liveImage.getWidth() + 10; // double the width
         int imageHeight = liveImage.getHeight() + 10; // double the height
 
         for (int i = 0; i < ship.getLives(); i++) {
-            graphics2D.drawImage(liveImage, x, y, imageWidth, imageHeight, null);
+            graphics2D.drawImage(liveImage, x, padding, imageWidth, imageHeight, null);
             x += imageWidth + padding; // Move the x-coordinate for the next image
         }
     }

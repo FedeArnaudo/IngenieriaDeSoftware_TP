@@ -16,12 +16,15 @@ public class Ship extends Entity{
     private final Random random;
 
     /**
-     * The bullets array list.
+     * Variables for bullets
      */
     ArrayList<Bullet> bullets = new ArrayList<>();
     public int bulletsCapacity;
     public int bulletFired;
 
+    /**
+     * Variables for player
+     */
     private int lives;
     private int score;
 
