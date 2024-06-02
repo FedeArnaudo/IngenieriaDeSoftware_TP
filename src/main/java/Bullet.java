@@ -109,6 +109,8 @@ public class Bullet extends Entity{
     private void drawBullet(Graphics2D graphics2D) {
         BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
         graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        graphics2D.setColor(Color.RED);
+        graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
 
     @Override

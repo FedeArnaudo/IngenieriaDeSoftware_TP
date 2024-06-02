@@ -30,7 +30,7 @@ public class Ship extends Entity{
         random = new Random();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
-        solidRectangle = new Rectangle(2, 5, (GamePanel.getOriginalTileSize() - 2), (GamePanel.getOriginalTileSize() - 5));
+        solidRectangle = new Rectangle(2, 5, 54, 40);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
 
@@ -147,6 +147,8 @@ public class Ship extends Entity{
     private void drawPlayer(Graphics2D graphics2D) {
         BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
         graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        graphics2D.setColor(Color.RED);
+        graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
 
     @Override

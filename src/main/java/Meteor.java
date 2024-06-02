@@ -18,12 +18,12 @@ public class Meteor extends Entity{
         random = new SecureRandom();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
-        solidRectangle = new Rectangle(18, 36, 20, 20);
+        solidRectangle = new Rectangle(18, 36, 18, 18);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
 
         setDefaultValues();
-        getMeteorImage();
+        setMeteorImage();
     }
 
     public ArrayList<BufferedImage> getBufferedImages() {
@@ -37,7 +37,7 @@ public class Meteor extends Entity{
         direction = "down";
     }
 
-    public void getMeteorImage() {
+    public void setMeteorImage() {
         try {
             BufferedImage meteor1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/meteor/meteor1.png")));
             BufferedImage meteor2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/meteor/meteor2.png")));
@@ -64,8 +64,9 @@ public class Meteor extends Entity{
     public void draw(Graphics2D graphics2D){
 
         BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
-
         graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        graphics2D.setColor(Color.RED);
+        graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
 
     @Override
