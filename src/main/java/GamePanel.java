@@ -47,7 +47,7 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread;
     Explosion explosion = new Explosion(this);
 
-    CollisionChecker collisionChecker = new CollisionChecker(this);
+    public CollisionChecker collisionChecker = new CollisionChecker(this);
     private double timer = 0;
     private int drawCount = 0;
     private long lastTime = System.nanoTime();

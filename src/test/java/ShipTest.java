@@ -1,5 +1,6 @@
 package test.java;
 
+import main.java.Bullet;
 import main.java.GamePanel;
 import main.java.KeyHandler;
 import main.java.Ship;
@@ -87,6 +88,7 @@ public class ShipTest {
     }
     @Test
     public void detectCollisionBtwBulletMeteor(){
-
+        keyHandler.spacePressed = true;
+        ship.update();
     }
 }

@@ -30,7 +30,7 @@ public class Ship extends Entity{
         random = new Random();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
-        solidRectangle = new Rectangle(2, 5, 54, 40);
+        solidRectangle = new Rectangle(3, 5, 52, 40);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
 
@@ -38,14 +38,12 @@ public class Ship extends Entity{
         initializeBullets();
         setPlayerImage();
     }
-
     public void setDefaultValues(){
         x = 400;
         y = 850;
         speed = 6;
         direction = "up";
     }
-
     private void initializeBullets() {
         for(int i = 0; i < bulletsCapacity; i++){
             bullets.add(new Bullet(gamePanel, keyHandler, this));
@@ -87,17 +85,22 @@ public class Ship extends Entity{
     }
 
     private void handleShooting() {
-        if (keyHandler.spacePressed && bulletFired < bulletsCapacity) {
+        if (keyHandler.spacePressed && bulletFired < bullets.size()) {
             shoot();
             keyHandler.spacePressed = false;
         }
     }
 
     private void updateBullets() {
+        Bullet bulletDelete = null;
         for (Bullet bullet: bullets){
-            if(bullet != null){
-                bullet.update();
+            bullet.update();
+            if(!bullet.collisionOn){
+                bulletDelete = bullet;
             }
+        }
+        if(bulletDelete != null){
+            bullets.remove(bulletDelete);
         }
     }
 
@@ -140,7 +143,9 @@ public class Ship extends Entity{
 
     private void drawBullets(Graphics2D graphics2D) {
         for (Bullet bullet: bullets){
-            bullet.draw(graphics2D);
+            if(bullet != null){
+                bullet.draw(graphics2D);
+            }
         }
     }
 
