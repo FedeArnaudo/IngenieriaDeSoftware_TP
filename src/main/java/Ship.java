@@ -197,4 +197,8 @@ public class Ship extends Entity{
     public void setBulletFired(int bulletFired) {
         this.bulletFired = bulletFired;
     }
+
+    public void increaseScore(int score) {
+        this.score += score;
+    }
 }
