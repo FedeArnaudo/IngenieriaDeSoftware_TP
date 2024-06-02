@@ -18,7 +18,7 @@ public class ShipTest {
     public void setUp() {
         gamePanel = mock(GamePanel.class);
         keyHandler = mock(KeyHandler.class);
-        ship = new Ship(gamePanel, keyHandler, 100);
+        ship = new Ship(gamePanel, keyHandler, 100, 4);
     }
 
     @Test
