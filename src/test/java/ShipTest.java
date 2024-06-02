@@ -85,4 +85,8 @@ public class ShipTest {
         ship.update();
         Assertions.assertEquals(initialX, ship.getX());
     }
+    @Test
+    public void detectCollisionBtwBulletMeteor(){
+
+    }
 }

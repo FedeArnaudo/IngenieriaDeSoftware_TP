@@ -33,7 +33,7 @@ public class Meteor extends Entity{
     public void setDefaultValues(){
         x = random.nextInt(GamePanel.getMaxScreenCol()) * gamePanel.getTileSize();
         y = - gamePanel.getTileSize();
-        speed = random.nextInt(8) + 2;
+        speed = random.nextInt(6) + 2;
         direction = "down";
     }
 

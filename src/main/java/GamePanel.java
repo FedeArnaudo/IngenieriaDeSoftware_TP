@@ -14,10 +14,10 @@ public class GamePanel extends JPanel implements Runnable{
     private static final int MAX_SCREEN_COL = 16;
     private static final int MAX_SCREEN_ROW = 16;
     private static final int FPS = 60;
-    private static final int METEORS_NUMBER = 6;
+    private static final int METEORS_NUMBER = 5;
     private static final int SHIPS_BULLETS_CAPACITY = 100;
 
-    private final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;
+    private final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;   // 19x3
     private final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;
     private final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW;
 
@@ -45,9 +45,12 @@ public class GamePanel extends JPanel implements Runnable{
      * This object is used to manage the game thread.
      */
     Thread gameThread;
+    Explosion explosion = new Explosion(this);
 
+    CollisionChecker collisionChecker = new CollisionChecker(this);
     private double timer = 0;
     private int drawCount = 0;
+    private long lastTime = System.nanoTime();
 
 
     public GamePanel(){
@@ -99,11 +102,16 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     private void updateMeteors() {
-        for (Meteor meteor: meteors){
-            if(meteor.y == -TILE_SIZE){
-                resetMeteorPosition(meteor);
+        if(!meteors.isEmpty()){
+            for (Meteor meteor: meteors){
+                if(meteor.y == -TILE_SIZE){
+                    resetMeteorPosition(meteor);
+                }
+                meteor.update();
             }
-            meteor.update();
+        }
+        else {
+            initializeMeteors();
         }
     }
 
@@ -149,27 +157,30 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     private void drawGameElements(Graphics2D graphics2D) {
-        try {
-            tileManager.draw(graphics2D);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        // Background
+        tileManager.draw(graphics2D);
 
-        ship.draw(graphics2D);
-
+        // Objects
         for(Meteor meteor: meteors){
-            meteor.draw(graphics2D);
+            if(meteor != null){
+                meteor.draw(graphics2D);
+            } else {
+
+            }
         }
+
+        // MainShip
+        ship.draw(graphics2D);
     }
 
     private void updateFPSCounter(Graphics2D graphics2D) {
-        timer = System.nanoTime() - timer;
-        if(timer > 1000000000){
+        long currentTime = System.nanoTime();
+        long elapsedTime = currentTime - lastTime;
+        if (elapsedTime > 1000000000) { // 1 segundo
             graphics2D.setFont(new Font("Arial", Font.PLAIN, 10));
             graphics2D.drawString("FPS: " + drawCount, 750, 30);
-            graphics2D.dispose();
             drawCount = 0;
-            timer = 0;
+            lastTime = currentTime;
         }
     }
 

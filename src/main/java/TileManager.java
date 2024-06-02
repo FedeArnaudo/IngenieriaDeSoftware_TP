@@ -33,7 +33,7 @@ public class TileManager {
         }
     }
 
-    public void draw(Graphics2D graphics2D) throws InterruptedException {
+    public void draw(Graphics2D graphics2D) {
         for(int i = 0; i < IMAGES_NUMB; i ++){
             graphics2D.drawImage(tiles.get(i).image, 0, (GamePanel.getOriginalTileSize() * i), gamePanel.getScreenWidth(), GamePanel.getOriginalTileSize(), null);
 

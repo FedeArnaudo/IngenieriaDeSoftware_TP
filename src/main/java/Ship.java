@@ -30,17 +30,13 @@ public class Ship extends Entity{
         random = new Random();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
-        solidRectangle = new Rectangle(2, 5, (gamePanel.getTileSize() - 2), (gamePanel.getTileSize() - 5));
+        solidRectangle = new Rectangle(2, 5, (GamePanel.getOriginalTileSize() - 2), (GamePanel.getOriginalTileSize() - 5));
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
 
         setDefaultValues();
         initializeBullets();
-        getPlayerImage();
-    }
-
-    public ArrayList<BufferedImage> getBufferedImages() {
-        return bufferedImages;
+        setPlayerImage();
     }
 
     public void setDefaultValues(){
@@ -56,8 +52,10 @@ public class Ship extends Entity{
         }
         bulletFired = 0;
     }
-
-    public void getPlayerImage() {
+    public ArrayList<BufferedImage> getBufferedImages() {
+        return bufferedImages;
+    }
+    public void setPlayerImage() {
         try {
             BufferedImage ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip194.png")));
             BufferedImage ship2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip195.png")));
@@ -97,7 +95,9 @@ public class Ship extends Entity{
 
     private void updateBullets() {
         for (Bullet bullet: bullets){
-            bullet.update();
+            if(bullet != null){
+                bullet.update();
+            }
         }
     }
 
@@ -117,6 +117,11 @@ public class Ship extends Entity{
         }
 
         else { direction = "up";}
+
+        // detectObject
+        if(gamePanel.collisionChecker.detectObjet(this) != null){
+
+        }
     }
 
     private void moveLeft() {

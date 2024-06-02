@@ -15,19 +15,20 @@ public class Bullet extends Entity{
 
     private final ArrayList<BufferedImage> bufferedImages;
     private final Random random;
-    public boolean shootFlag;
+    public boolean shootFlag;           // to indicate that the bullet has been fired
 
     public Bullet(GamePanel gamePanel, KeyHandler keyHandler, Ship ship){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.ship = ship;
+
         random = new Random();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
-        shootFlag = false;
-        solidRectangle = new Rectangle(1, 1, (gamePanel.getTileSize() - 1), (gamePanel.getTileSize() - 1));
+        solidRectangle = new Rectangle(24, 18, (gamePanel.getTileSize() - 48), (gamePanel.getTileSize() - 36));
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
+        shootFlag = false;
 
         setDefaultValues();
         getBulletImage();
@@ -46,17 +47,17 @@ public class Bullet extends Entity{
 
     public void getBulletImage() {
         try {
-            BufferedImage bullet1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet1.png")));
-            BufferedImage bullet2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet2.png")));
-            BufferedImage bullet3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet3.png")));
-            BufferedImage bullet4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet4.png")));
-            BufferedImage bullet5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet5.png")));
+            BufferedImage bullet1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet.png")));
+            //BufferedImage bullet2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet2.png")));
+            //BufferedImage bullet3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet3.png")));
+            //BufferedImage bullet4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet4.png")));
+            //BufferedImage bullet5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet5.png")));
 
             bufferedImages.add(bullet1);
-            bufferedImages.add(bullet2);
-            bufferedImages.add(bullet3);
-            bufferedImages.add(bullet4);
-            bufferedImages.add(bullet5);
+            //bufferedImages.add(bullet2);
+            //bufferedImages.add(bullet3);
+            //bufferedImages.add(bullet4);
+            //bufferedImages.add(bullet5);
         }
         catch (IOException e){
             e.printStackTrace();
@@ -77,8 +78,21 @@ public class Bullet extends Entity{
 
     private void shoot(){
         y -= getSpeed();
-    }
 
+        // detectObject
+        Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
+        if(entityCollision != null){
+            for(int i = 0; i < gamePanel.meteors.size(); i++){
+                if(gamePanel.meteors.get(i).equals(entityCollision)){
+                    gamePanel.meteors.remove(i);
+                    this.collisionOn = false;
+                }
+            }
+        }
+    }
+    /**
+     * This method updates the position of the bullet when it has not yet been fired
+     */
     private void resetPosition() {
         if (!shootFlag) {
             x = ship.getX();
