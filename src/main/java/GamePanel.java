@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-
 public class GamePanel extends JPanel implements Runnable{
 
     /**
@@ -185,7 +184,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     private double calculateDrawInterval() {
-        return 1000000000/FPS;   //1ps/FPS   1ps/60 = 16.6666666667ms
+        return (double) 1000000000 /FPS;   //1ps/FPS   1ps/60 = 16.6666666667ms
     }
 
     private void updateGame() {
@@ -278,24 +277,10 @@ public class GamePanel extends JPanel implements Runnable{
         int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
         int y = 350;
 
-        for (int i = 0; i < word.length(); i++) {
-            char ch = word.charAt(i);
-            BufferedImage img = letterImages.get(ch);
-            if (img != null) {
-                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
-                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
-            }
-        }
+        drawFloatingText(graphics2D, "spaceships", letterImages, startX, y, floatTime);
 
         // Draw the "press enter to play" text
-        String enterText = "PRESS ENTER TO PLAY";
-        Font font = new Font("Courier New", Font.PLAIN, 20);
-        graphics2D.setFont(font);
-        FontMetrics metrics = graphics2D.getFontMetrics(font);
-        int x = (getScreenWidth() - metrics.stringWidth(enterText)) / 2;
-        int yEnterText = (int)(getScreenHeight() * 0.75);
-        graphics2D.setColor(Color.WHITE);
-        graphics2D.drawString(enterText, x, yEnterText);
+        drawCenteredText(graphics2D, "PRESS ENTER TO PLAY", new Font("Courier New", Font.PLAIN, 20), 0.75);
     }
 
     private void drawPauseScreen(Graphics2D graphics2D) {
@@ -306,23 +291,10 @@ public class GamePanel extends JPanel implements Runnable{
         int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
         int y = (int)(getScreenHeight() * 0.39);
 
-        for (int i = 0; i < word.length(); i++) {
-            char ch = word.charAt(i);
-            BufferedImage img = letterImages.get(ch);
-            if (img != null) {
-                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
-                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
-            }
-        }
+        drawFloatingText(graphics2D, "pause", letterImages, startX, y, floatTime);
 
-        String enterText = "PRESS P TO RESUME";
-        Font font = new Font("Courier New", Font.PLAIN, 20);
-        graphics2D.setFont(font);
-        FontMetrics metrics = graphics2D.getFontMetrics(font);
-        int x = (getScreenWidth() - metrics.stringWidth(enterText)) / 2;
-        int yEnterText = (int)(getScreenHeight() * 0.75);
-        graphics2D.setColor(Color.WHITE);
-        graphics2D.drawString(enterText, x, yEnterText);
+        // Draw the "press P to resume" text
+        drawCenteredText(graphics2D, "PRESS P TO RESUME", new Font("Courier New", Font.PLAIN, 20), 0.75);
     }
 
     private void drawScore(Graphics2D graphics2D) {
@@ -372,6 +344,26 @@ public class GamePanel extends JPanel implements Runnable{
             graphics2D.drawImage(liveImage, x, padding, imageWidth, imageHeight, null);
             x += imageWidth + padding; // Move the x-coordinate for the next image
         }
+    }
+
+    private void drawFloatingText(Graphics2D graphics2D, String text, Map<Character, BufferedImage> letterImages, int startX, int y, double floatTime) {
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            BufferedImage img = letterImages.get(ch);
+            if (img != null) {
+                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
+                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
+            }
+        }
+    }
+
+    private void drawCenteredText(Graphics2D graphics2D, String text, Font font, double yRatio) {
+        graphics2D.setFont(font);
+        FontMetrics metrics = graphics2D.getFontMetrics(font);
+        int x = (getScreenWidth() - metrics.stringWidth(text)) / 2;
+        int y = (int)(getScreenHeight() * yRatio);
+        graphics2D.setColor(Color.WHITE);
+        graphics2D.drawString(text, x, y);
     }
 
     public static int getOriginalTileSize() {
