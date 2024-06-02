@@ -13,7 +13,7 @@ public class DoubleBulletStrategy implements ShootingStrategy {
 
     @Override
     public void handleShooting(Ship ship) {
-        if (ship.keyHandler.getSpacePressed() && ship.getBulletFired() < ship.getBulletsCapacity() - 1 && !ship.keyHandler.getBulletFiredInCurrentKeyPress()) {
+        if (ship.keyHandler.getSpacePressed() && ship.getBulletFired() < ship.getBulletsCapacity() - 1 && ship.keyHandler.isBulletNotFiredInCurrentKeyPress()) {
             if (shootCount == 0 || shootCount == 2) {
                 shoot(ship);
                 if (shootCount==2){

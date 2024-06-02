@@ -29,7 +29,7 @@ public class TileManager {
             }
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException("Error loading tile image", e);
         }
     }
 

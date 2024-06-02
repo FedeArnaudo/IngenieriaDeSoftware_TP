@@ -117,7 +117,7 @@ public class GamePanel extends JPanel implements Runnable{
                 numberImages.add(numberImage);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load number images", e);
         }
     }
 
@@ -125,7 +125,7 @@ public class GamePanel extends JPanel implements Runnable{
         try {
             bulletScoreboardImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/scoreboard/bullet_scoreboard.png")));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load bullet scoreboard image", e);
         }
     }
 
@@ -133,7 +133,7 @@ public class GamePanel extends JPanel implements Runnable{
         try {
             liveImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/lives/live.png")));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load live image", e);
         }
     }
 
@@ -280,7 +280,7 @@ public class GamePanel extends JPanel implements Runnable{
         drawFloatingText(graphics2D, "spaceships", letterImages, startX, y, floatTime);
 
         // Draw the "press enter to play" text
-        drawCenteredText(graphics2D, "PRESS ENTER TO PLAY", new Font("Courier New", Font.PLAIN, 20), 0.75);
+        drawCenteredText(graphics2D, "PRESS ENTER TO PLAY", new Font("Courier New", Font.PLAIN, 20));
     }
 
     private void drawPauseScreen(Graphics2D graphics2D) {
@@ -294,7 +294,7 @@ public class GamePanel extends JPanel implements Runnable{
         drawFloatingText(graphics2D, "pause", letterImages, startX, y, floatTime);
 
         // Draw the "press P to resume" text
-        drawCenteredText(graphics2D, "PRESS P TO RESUME", new Font("Courier New", Font.PLAIN, 20), 0.75);
+        drawCenteredText(graphics2D, "PRESS P TO RESUME", new Font("Courier New", Font.PLAIN, 20));
     }
 
     private void drawScore(Graphics2D graphics2D) {
@@ -357,11 +357,11 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    private void drawCenteredText(Graphics2D graphics2D, String text, Font font, double yRatio) {
+    private void drawCenteredText(Graphics2D graphics2D, String text, Font font) {
         graphics2D.setFont(font);
         FontMetrics metrics = graphics2D.getFontMetrics(font);
         int x = (getScreenWidth() - metrics.stringWidth(text)) / 2;
-        int y = (int)(getScreenHeight() * yRatio);
+        int y = (int)(getScreenHeight() * 0.75);
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(text, x, y);
     }

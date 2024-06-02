@@ -19,13 +19,13 @@ public class Ship extends Entity{
      * Variables for bullets
      */
     ArrayList<Bullet> bullets = new ArrayList<>();
-    private int bulletsCapacity;
+    private final int bulletsCapacity;
     private int bulletFired;
 
     /**
      * Variables for player
      */
-    private int lives;
+    private final int lives;
     private int score;
 
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
@@ -82,7 +82,7 @@ public class Ship extends Entity{
             bufferedImages.add(ship5);
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException("Could not load player image", e);
         }
     }
 

@@ -48,7 +48,7 @@ public class Meteor extends Entity{
             bufferedImages.add(meteor3);
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException("Error loading meteor image", e);
         }
     }
 

@@ -83,20 +83,8 @@ public class KeyHandler implements KeyListener {
         return wPressed;
     }
 
-    public boolean getBulletFiredInCurrentKeyPress() {
-        return bulletFiredInCurrentKeyPress;
-    }
-
-    public void setLeftPressed(boolean leftPressed) {
-        this.leftPressed = leftPressed;
-    }
-
-    public void setRightPressed(boolean rightPressed) {
-        this.rightPressed = rightPressed;
-    }
-
-    public void setSpacePressed(boolean spacePressed) {
-        this.spacePressed = spacePressed;
+    public boolean isBulletNotFiredInCurrentKeyPress() {
+        return !bulletFiredInCurrentKeyPress;
     }
 
     public void setEnterPressed(boolean enterPressed) {

@@ -59,7 +59,7 @@ public class Bullet extends Entity{
             bufferedImages.add(bullet5);
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException("Error loading bullet image", e);
         }
     }
 
@@ -111,10 +111,6 @@ public class Bullet extends Entity{
     @Override
     public int getSpeed() {
         return speed;
-    }
-
-    public boolean getShootFlag() {
-        return shootFlag;
     }
 
     public void setShootFlag(boolean shootFlag) {
