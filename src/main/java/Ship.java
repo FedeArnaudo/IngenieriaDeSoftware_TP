@@ -27,7 +27,7 @@ public class Ship extends Entity{
      */
     private final int lives;
     private int score;
-    private int cooldownTime;
+    private final int cooldownTime;
     private int cooldownCounter;
 
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
