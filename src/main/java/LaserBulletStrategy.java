@@ -11,7 +11,7 @@ public class LaserBulletStrategy implements ShootingStrategy {
 
     @Override
     public void handleShooting(Ship ship) {
-        if (ship.keyHandler.spacePressed && ship.bulletFired < ship.bulletsCapacity) {
+        if (ship.keyHandler.getSpacePressed() && ship.bulletFired < ship.bulletsCapacity) {
             shoot(ship);
         }
     }

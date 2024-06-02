@@ -79,6 +79,14 @@ public class KeyHandler implements KeyListener {
         return pPressed;
     }
 
+    public boolean getWPressed() {
+        return wPressed;
+    }
+
+    public boolean getBulletFiredInCurrentKeyPress() {
+        return bulletFiredInCurrentKeyPress;
+    }
+
     public void setLeftPressed(boolean leftPressed) {
         this.leftPressed = leftPressed;
     }
@@ -97,5 +105,13 @@ public class KeyHandler implements KeyListener {
 
     public void setPPressed(boolean pPressed) {
         this.pPressed = pPressed;
+    }
+
+    public void setWPressed(boolean wPressed) {
+        this.wPressed = wPressed;
+    }
+
+    public void setBulletFiredInCurrentKeyPress(boolean bulletFiredInCurrentKeyPress) {
+        this.bulletFiredInCurrentKeyPress = bulletFiredInCurrentKeyPress;
     }
 }

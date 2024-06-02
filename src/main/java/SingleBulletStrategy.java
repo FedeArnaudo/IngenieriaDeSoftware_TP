@@ -11,9 +11,9 @@ public class SingleBulletStrategy implements ShootingStrategy {
 
     @Override
     public void handleShooting(Ship ship) {
-        if (ship.keyHandler.spacePressed && ship.bulletFired < ship.bulletsCapacity && !ship.keyHandler.bulletFiredInCurrentKeyPress) {
+        if (ship.keyHandler.getSpacePressed() && ship.bulletFired < ship.bulletsCapacity && !ship.keyHandler.getBulletFiredInCurrentKeyPress()) {
             shoot(ship);
-            ship.keyHandler.bulletFiredInCurrentKeyPress = true; // set the flag to true after a bullet is fired
+            ship.keyHandler.setBulletFiredInCurrentKeyPress(true); // set the flag to true after a bullet is fired
         }
     }
 

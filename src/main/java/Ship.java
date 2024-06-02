@@ -28,10 +28,9 @@ public class Ship extends Entity{
     private int lives;
     private int score;
 
-    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity){
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
 
-    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int bulletsCapacity){
+    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.lives = lives;
@@ -133,7 +132,7 @@ public class Ship extends Entity{
     }
 
     private void changeShootingStrategy() {
-        if (keyHandler.wPressed) {
+        if (keyHandler.getWPressed()) {
             if (shootingStrategy instanceof SingleBulletStrategy) {
                 setShootingStrategy(new DoubleBulletStrategy());
             } else if (shootingStrategy instanceof DoubleBulletStrategy) {
@@ -141,7 +140,7 @@ public class Ship extends Entity{
             } else {
                 setShootingStrategy(new SingleBulletStrategy());
             }
-            keyHandler.wPressed = false;
+            keyHandler.setWPressed(false);
         }
     }
 
