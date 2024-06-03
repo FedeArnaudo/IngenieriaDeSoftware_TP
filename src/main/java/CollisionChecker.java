@@ -38,7 +38,7 @@ public class CollisionChecker {
             switch (entity1.getDirection()){
                 case "up":
                     if(entity1.getSolidRectangle().intersects(entity2.getSolidRectangle())){
-                        System.out.println("Front collision");
+                        //System.out.println("Front collision");
                         crashed = true;
                     }
                     break;
@@ -46,7 +46,7 @@ public class CollisionChecker {
                 case "left":
                     entity1.getSolidRectangle().setLocation((int)entity1.getSolidRectangle().getX() - entity1.getSpeed(), (int)entity1.getSolidRectangle().getY());
                     if(entity1.getSolidRectangle().intersects(entity2.getSolidRectangle())){
-                        System.out.println("Left collision");
+                        //System.out.println("Left collision");
                         crashed = true;
                     }
                     break;
@@ -54,7 +54,7 @@ public class CollisionChecker {
                 case "right":
                     entity1.getSolidRectangle().setLocation((int)entity1.getSolidRectangle().getX() + entity1.getSpeed(), (int)entity1.getSolidRectangle().getY());
                     if(entity1.getSolidRectangle().intersects(entity2.getSolidRectangle())){
-                        System.out.println("Right collision");
+                        //System.out.println("Right collision");
                         crashed = true;
                     }
                     break;
