@@ -371,7 +371,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void drawCooldownCountdown(Graphics2D graphics2D) {
-        String cooldownCountdownString = String.format("%d", ship.getCooldownCounter() / 60);
+        String cooldownCountdownString = String.format("%d", (ship.getCooldownCounter() / 60) + 1);
         int x_padding = 40;
         int y_padding = 20;
         int x = getScreenWidth() - graphics2D.getFontMetrics(arialFont).stringWidth(cooldownCountdownString) - x_padding;
