@@ -97,7 +97,7 @@ public class Bullet extends Entity{
     /**
      * This method updates the position of the bullet when it has not yet been fired
      */
-    private void resetPosition() {
+    public void resetPosition() {
         if (!shootFlag) {
             x = ship.getX();
             y = ship.getY();
@@ -105,6 +105,7 @@ public class Bullet extends Entity{
             x = ship.getX();
             y = ship.getY();
             shootFlag = false;
+            collision = false;
         }
     }
 

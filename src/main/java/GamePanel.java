@@ -28,10 +28,10 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * Game Settings
      */
-    private static final int METEORS_NUMBER = 6;
+    private static final int METEORS_NUMBER = 12;
     private static final int SHIPS_LIVES = 5;
     private static final int SHIPS_BULLETS_CAPACITY = 100;
-    private static final int SHIP_COOLDOWN_TIME = 45;
+    private static final int SHIP_COOLDOWN_TIME = 30;
 
     /**
      * This object is used to handle keyboard inputs from the user.

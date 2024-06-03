@@ -107,6 +107,7 @@ public class Ship extends Entity{
 
         if(cooldownCounter == 0){
             bulletFired = 50;
+
             cooldownCounter = cooldownTime * GamePanel.getFps();
         }
     }
