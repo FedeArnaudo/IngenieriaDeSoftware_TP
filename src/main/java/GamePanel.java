@@ -5,11 +5,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -31,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable{
      */
     private static final int METEORS_NUMBER = 9;
     private static final int METEORS_SPEED_THRESHOLD = 8;
-    private static final int SHIPS_LIVES = 5;
+    private static final int SHIPS_LIVES = 7;
     private static final int SHIPS_SPEED = 6;
     private static final int SHIPS_BULLETS_CAPACITY = 100;
     private static final int SHIPS_BULLET_SPEED = 20;
@@ -182,6 +189,8 @@ public class GamePanel extends JPanel implements Runnable{
 
     @Override
     public void run() {
+        //playMusic("res/music/background.wav");
+
         double drawInterval = calculateDrawInterval();
         double nextDrawTime = System.nanoTime() + drawInterval;
 
@@ -223,9 +232,9 @@ public class GamePanel extends JPanel implements Runnable{
         updatePlayer();
         updateMeteors();
 
-        if (ship.getScore() / 1000 > lastScore) {
-            lastScore = ship.getScore() / 1000;
-            scoreZoom = 1.5; // Set zoom level to 2 (double size)
+        if (ship.getScore() / 100 > lastScore) {
+            scoreZoom = 1.5;
+            lastScore = ship.getScore() / 100;
         }
     }
 
@@ -431,6 +440,18 @@ public class GamePanel extends JPanel implements Runnable{
         int y = (int)(getScreenHeight() * 0.75);
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(text, x, y);
+    }
+
+    public void playMusic(String filePath) {
+        try {
+            URL url = this.getClass().getClassLoader().getResource(filePath);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 
     public static int getOriginalTileSize() {
