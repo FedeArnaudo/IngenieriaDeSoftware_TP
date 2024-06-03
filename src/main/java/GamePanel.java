@@ -83,6 +83,8 @@ public class GamePanel extends JPanel implements Runnable{
      * Array for scoreboard numbers
      */
     private final ArrayList<BufferedImage> numberImages = new ArrayList<>();
+    private double scoreZoom = 1.0;
+    private int lastScore = 0;
 
     /**
      * Variables for bullet scoreboard
@@ -220,6 +222,11 @@ public class GamePanel extends JPanel implements Runnable{
     private void updateGame() {
         updatePlayer();
         updateMeteors();
+
+        if (ship.getScore() / 1000 > lastScore) {
+            lastScore = ship.getScore() / 1000;
+            scoreZoom = 1.5; // Set zoom level to 2 (double size)
+        }
     }
 
     private void updatePlayer() {
@@ -325,8 +332,13 @@ public class GamePanel extends JPanel implements Runnable{
         for (char c : scoreString.toCharArray()) {
             int number = Character.getNumericValue(c);
             BufferedImage numberImage = numberImages.get(number);
-            graphics2D.drawImage(numberImage, x, padding, numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
+            graphics2D.drawImage(numberImage, x, padding, (int)(numberImage.getWidth() * sizeMultiplier * scoreZoom), (int)(numberImage.getHeight() * sizeMultiplier * scoreZoom), null);
             x += numberImage.getWidth() * sizeMultiplier;
+        }
+
+        // Gradually decrease scoreZoom back to 1
+        if (scoreZoom > 1.0) {
+            scoreZoom -= 0.015;
         }
     }
 
