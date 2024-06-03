@@ -189,7 +189,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     @Override
     public void run() {
-        //playMusic("res/music/background.wav");
+        playMusic("res/music/background.wav");
 
         double drawInterval = calculateDrawInterval();
         double nextDrawTime = System.nanoTime() + drawInterval;
