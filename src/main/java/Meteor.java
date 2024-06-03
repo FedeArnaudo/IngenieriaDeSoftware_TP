@@ -11,6 +11,8 @@ import java.util.Objects;
 public class Meteor extends Entity{
     private final GamePanel gamePanel;
     private final ArrayList<BufferedImage> bufferedImages;
+    private BufferedImage explosionImage;
+    private int explosionAnimationCounter;
     private final SecureRandom random ;
 
     public Meteor(GamePanel gamePanel){
@@ -21,9 +23,11 @@ public class Meteor extends Entity{
         solidRectangle = new Rectangle(18, 36, 20, 20);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
+        explosionAnimationCounter = 0;
 
         setDefaultValues();
         setMeteorImage();
+        setExplosionImage();
     }
 
     private ArrayList<BufferedImage> getBufferedImages() {
@@ -53,21 +57,42 @@ public class Meteor extends Entity{
         }
     }
 
+    private void setExplosionImage() {
+        try {
+            explosionImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion1.png")));
+        }
+        catch (IOException e){
+            throw new RuntimeException("Error loading explosion image", e);
+        }
+    }
+
     @Override
     public void update(){
         y += getSpeed();
-        if(y > gamePanel.getScreenHeight() || collision){
+
+        if(y > gamePanel.getScreenHeight()){
             setDefaultValues();
+        }
+        else if (collision){
+            explosionAnimationCounter++;
+            if(explosionAnimationCounter > 10){
+                setDefaultValues();
+                explosionAnimationCounter = 0;
+            }
         }
     }
 
     @Override
     public void draw(Graphics2D graphics2D){
-
-        BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
-        graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-        //graphics2D.setColor(Color.RED);
-        //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
+        if(collision){
+            graphics2D.drawImage(explosionImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        }
+        else {
+            BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
+            graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+            //graphics2D.setColor(Color.RED);
+            //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
+        }
     }
 
     @Override

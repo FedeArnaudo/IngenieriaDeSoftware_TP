@@ -30,6 +30,8 @@ public class Ship extends Entity{
 
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
 
+    private int collisionDebounce;
+
     public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
@@ -39,6 +41,7 @@ public class Ship extends Entity{
         score = 0;
         random = new Random();
         collision = false;
+        collisionDebounce = 0;
         bufferedImages = new ArrayList<>();
         solidRectangle = new Rectangle(3, 5, 52, 40);
         solidAreaDefaultX = solidRectangle.x;
@@ -113,15 +116,25 @@ public class Ship extends Entity{
         else { direction = "up";}
 
         // detectObject
-        Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
-        if(entityCollision != null){
-            for(int i = 0; i < gamePanel.getMeteors().size(); i++){
-                if(gamePanel.getMeteors().get(i).equals(entityCollision)){
-                    gamePanel.getMeteors().get(i).setCollision(true);
-                    //this.collision = true;
-                    lives--;
+        if (!collision) {
+            Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
+            if (entityCollision != null) {
+                for (int i = 0; i < gamePanel.getMeteors().size(); i++) {
+                    if (gamePanel.getMeteors().get(i).equals(entityCollision)) {
+                        gamePanel.getMeteors().get(i).setCollision(true);
+                        collision = true;
+                        lives--;
+                    }
                 }
             }
+        }
+
+        if (collision && collisionDebounce <= 10){
+            collisionDebounce++;
+        }
+        else if (collision){
+            collision = false;
+            collisionDebounce = 0;
         }
     }
 
