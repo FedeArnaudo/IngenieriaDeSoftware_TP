@@ -16,17 +16,27 @@ public class Ship extends Entity{
     private final Random random;
 
     /**
-     * The bullets array list.
+     * Variables for bullets
      */
     ArrayList<Bullet> bullets = new ArrayList<>();
-    public int bulletsCapacity;
-    public int bulletFired;
+    private final int bulletsCapacity;
+    private int bulletFired;
 
-    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int bulletsCapacity){
+    /**
+     * Variables for player
+     */
+    private final int lives;
+    private int score;
+
+    private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
+
+    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
+        this.lives = lives;
         this.bulletsCapacity = bulletsCapacity;
 
+        score = 0;
         random = new Random();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
@@ -38,21 +48,29 @@ public class Ship extends Entity{
         initializeBullets();
         setPlayerImage();
     }
-    public void setDefaultValues(){
+
+    private ArrayList<BufferedImage> getBufferedImages() {
+        return bufferedImages;
+    }
+
+    private void setDefaultValues(){
         x = 400;
         y = 850;
         speed = 6;
         direction = "up";
     }
+
     private void initializeBullets() {
         for(int i = 0; i < bulletsCapacity; i++){
             bullets.add(new Bullet(gamePanel, keyHandler, this));
         }
         bulletFired = 0;
     }
+
     public ArrayList<BufferedImage> getBufferedImages() {
         return bufferedImages;
     }
+
     public void setPlayerImage() {
         try {
             BufferedImage ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip194.png")));
@@ -68,51 +86,28 @@ public class Ship extends Entity{
             bufferedImages.add(ship5);
         }
         catch (IOException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException("Could not load player image", e);
         }
-    }
-
-    public void shoot(){
-        bulletFired++;
-        bullets.get(bulletFired-1).shootFlag = true;
     }
 
     @Override
     public void update(){
-        handleShooting();
-        updateBullets();
+        shootingStrategy.handleShooting(this);
+        shootingStrategy.updateBullets(this);
         handleMovement();
-    }
-
-    private void handleShooting() {
-        if (keyHandler.spacePressed && bulletFired < bullets.size()) {
-            shoot();
-            keyHandler.spacePressed = false;
-        }
-    }
-
-    private void updateBullets() {
-        Bullet bulletDelete = null;
-        for (Bullet bullet: bullets){
-            bullet.update();
-            if(!bullet.collisionOn){
-                bulletDelete = bullet;
-            }
-        }
-        if(bulletDelete != null){
-            bullets.remove(bulletDelete);
-        }
+        changeShootingStrategy();
+        resetScore();
     }
 
     private void handleMovement() {
-        if(keyHandler.leftPressed){
+        if(keyHandler.getLeftPressed()){
             direction = "left";
             if(getX() > 0) {
                 moveLeft();
             }
         }
 
-        else if (keyHandler.rightPressed) {
+        else if (keyHandler.getRightPressed()) {
             direction = "right";
             if(getX() < (gamePanel.getScreenWidth() - gamePanel.getTileSize())){
                 moveRight();
@@ -135,6 +130,29 @@ public class Ship extends Entity{
         x += getSpeed();
     }
 
+    private void resetScore() {
+        if (score > 999999) {
+            score = 0;
+        }
+    }
+
+    private void setShootingStrategy(ShootingStrategy shootingStrategy) {
+        this.shootingStrategy = shootingStrategy;
+    }
+
+    private void changeShootingStrategy() {
+        if (keyHandler.getWPressed()) {
+            if (shootingStrategy instanceof SingleBulletStrategy) {
+                setShootingStrategy(new DoubleBulletStrategy());
+            } else if (shootingStrategy instanceof DoubleBulletStrategy) {
+                setShootingStrategy(new LaserBulletStrategy());
+            } else {
+                setShootingStrategy(new SingleBulletStrategy());
+            }
+            keyHandler.setWPressed(false);
+        }
+    }
+
     @Override
     public void draw(Graphics2D graphics2D){
         drawBullets(graphics2D);
@@ -143,9 +161,7 @@ public class Ship extends Entity{
 
     private void drawBullets(Graphics2D graphics2D) {
         for (Bullet bullet: bullets){
-            if(bullet != null){
-                bullet.draw(graphics2D);
-            }
+            bullet.draw(graphics2D);
         }
     }
 
@@ -187,5 +203,29 @@ public class Ship extends Entity{
     @Override
     public int getSolidAreaDefaultY() {
         return solidAreaDefaultY;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public int getBulletsCapacity() {
+        return bulletsCapacity;
+    }
+
+    public int getBulletFired() {
+        return bulletFired;
+    }
+
+    public void increaseBulletFired(int bulletFired) {
+        this.bulletFired += bulletFired;
+    }
+
+    public void setBulletFired(int bulletFired) {
+        this.bulletFired = bulletFired;
     }
 }

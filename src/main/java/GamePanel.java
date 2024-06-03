@@ -1,8 +1,14 @@
 package main.java;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -14,12 +20,17 @@ public class GamePanel extends JPanel implements Runnable{
     private static final int MAX_SCREEN_COL = 16;
     private static final int MAX_SCREEN_ROW = 16;
     private static final int FPS = 60;
-    private static final int METEORS_NUMBER = 5;
-    private static final int SHIPS_BULLETS_CAPACITY = 100;
 
     private final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE;   // 19x3
     private final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;
     private final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW;
+
+    /**
+     * Game Settings
+     */
+    private static final int METEORS_NUMBER = 6;
+    private static final int SHIPS_LIVES = 5;
+    private static final int SHIPS_BULLETS_CAPACITY = 100;
 
     /**
      * This object is used to handle keyboard inputs from the user.
@@ -29,7 +40,7 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * This object represents the player's ship in the game.
      */
-    Ship ship = new Ship(this, keyHandler, SHIPS_BULLETS_CAPACITY);
+    Ship ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_BULLETS_CAPACITY);
 
     /**
      * This object represents the meteors that travel vertically across the map.
@@ -52,7 +63,33 @@ public class GamePanel extends JPanel implements Runnable{
     private double timer = 0;
     private int drawCount = 0;
     private long lastTime = System.nanoTime();
+    /**
+     * Variables for welcome screen
+     */
+    private boolean welcomeScreen = true;
+    private final Map<Character, BufferedImage> letterImages = new HashMap<>();
+    private double floatTime = 0;
 
+    /**
+     * Variables for pause screen
+     */
+    private boolean isPaused = false;
+
+    /**
+     * Array for scoreboard numbers
+     */
+    private final ArrayList<BufferedImage> numberImages = new ArrayList<>();
+
+    /**
+     * Variables for bullet scoreboard
+     */
+    Font arialFont = new Font("Courier", Font.PLAIN, 24);
+    private BufferedImage bulletScoreboardImage;
+
+    /**
+     * Variables for lives scoreboard
+     */
+    private BufferedImage liveImage;
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -61,7 +98,49 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
 
+        loadLetterImages();
+        loadNumberImages();
+        loadBulletScoreboardImage();
+        loadLiveImage();
         initializeMeteors();
+    }
+
+    private void loadLetterImages() {
+        try {
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/letters/letter_" + ch + ".png")));
+                letterImages.put(ch, img);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load letter images", e);
+        }
+    }
+
+    private void loadNumberImages() {
+        try {
+            for (int i = 0; i <= 9; i++) {
+                BufferedImage numberImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/numbers/number_" + i + ".png")));
+                numberImages.add(numberImage);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load number images", e);
+        }
+    }
+
+    private void loadBulletScoreboardImage() {
+        try {
+            bulletScoreboardImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/scoreboard/bullet_scoreboard.png")));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load bullet scoreboard image", e);
+        }
+    }
+
+    private void loadLiveImage() {
+        try {
+            liveImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/lives/live.png")));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load live image", e);
+        }
     }
 
     private void initializeMeteors() {
@@ -76,21 +155,42 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     @Override
-    public void run(){
+    public void run() {
         double drawInterval = calculateDrawInterval();
         double nextDrawTime = System.nanoTime() + drawInterval;
 
-        while (gameThread != null){
-            updateGame();
+        while (gameThread != null) {
+            if (!welcomeScreen) {
+                if (keyHandler.getPPressed() && !isPaused) {
+                    isPaused = true;
+                    keyHandler.setPPressed(false);
+                } else if (keyHandler.getPPressed() && isPaused) {
+                    isPaused = false;
+                    keyHandler.setPPressed(false);
+                }
+            }
+
+            if (!isPaused) {
+                if (keyHandler.getEnterPressed() && welcomeScreen) {
+                    welcomeScreen = false;
+                    keyHandler.setEnterPressed(false);
+                }
+
+                if (!welcomeScreen) {
+                    updateGame();
+                }
+            }
+
+            floatTime += 0.05;
+
             repaint();
-            drawCount++;
 
             nextDrawTime = sleepAndCalculateNextDrawTime(drawInterval, nextDrawTime);
         }
     }
 
     private double calculateDrawInterval() {
-        return 1000000000/FPS;   //1ps/FPS   1ps/60 = 16.6666666667ms
+        return (double) 1000000000 /FPS;   //1ps/FPS   1ps/60 = 16.6666666667ms
     }
 
     private void updateGame() {
@@ -148,41 +248,130 @@ public class GamePanel extends JPanel implements Runnable{
         return nextDrawTime + drawInterval;
     }
 
-    public void paintComponent(Graphics graphics){
+    public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
 
-        Graphics2D  graphics2D = (Graphics2D) graphics;
+        Graphics2D graphics2D = (Graphics2D) graphics;
 
-        drawGameElements(graphics2D);
-        updateFPSCounter(graphics2D);
+        if (isPaused) {
+            drawPauseScreen(graphics2D);
+        } else {
+            drawGameElements(graphics2D);
+        }
     }
 
     private void drawGameElements(Graphics2D graphics2D) {
         // Background
         tileManager.draw(graphics2D);
 
-        // Objects
-        for(Meteor meteor: meteors){
-            if(meteor != null){
-                meteor.draw(graphics2D);
-            } else {
-
-            }
+        if (welcomeScreen){
+            drawWelcomeScreen(graphics2D);
         }
+        else {
+            ship.draw(graphics2D);
 
-        // MainShip
-        ship.draw(graphics2D);
+            for(Meteor meteor: meteors){
+                meteor.draw(graphics2D);
+            }
+
+            drawScore(graphics2D);
+            drawBulletsLeft(graphics2D);
+            drawLives(graphics2D);
+        }
     }
 
-    private void updateFPSCounter(Graphics2D graphics2D) {
-        long currentTime = System.nanoTime();
-        long elapsedTime = currentTime - lastTime;
-        if (elapsedTime > 1000000000) { // 1 segundo
-            graphics2D.setFont(new Font("Arial", Font.PLAIN, 10));
-            graphics2D.drawString("FPS: " + drawCount, 750, 30);
-            drawCount = 0;
-            lastTime = currentTime;
+    private void drawWelcomeScreen(Graphics2D graphics2D) {
+        String word = "spaceships";
+        int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
+        int y = 350;
+
+        drawFloatingText(graphics2D, "spaceships", letterImages, startX, y, floatTime);
+
+        // Draw the "press enter to play" text
+        drawCenteredText(graphics2D, "PRESS ENTER TO PLAY", new Font("Courier New", Font.PLAIN, 20));
+    }
+
+    private void drawPauseScreen(Graphics2D graphics2D) {
+        graphics2D.setColor(Color.decode("#000422"));
+        graphics2D.fillRect(0, 0, getScreenWidth(), getScreenHeight());
+
+        String word = "pause";
+        int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
+        int y = (int)(getScreenHeight() * 0.39);
+
+        drawFloatingText(graphics2D, "pause", letterImages, startX, y, floatTime);
+
+        // Draw the "press P to resume" text
+        drawCenteredText(graphics2D, "PRESS P TO RESUME", new Font("Courier New", Font.PLAIN, 20));
+    }
+
+    private void drawScore(Graphics2D graphics2D) {
+        String scoreString = String.format("%06d", ship.getScore());
+        int padding = 20; // padding from the corner
+        int sizeMultiplier = 2; // make the score bigger
+        int x = getScreenWidth() - (numberImages.get(0).getWidth() * sizeMultiplier * scoreString.length()) - padding;
+
+        for (char c : scoreString.toCharArray()) {
+            int number = Character.getNumericValue(c);
+            BufferedImage numberImage = numberImages.get(number);
+            graphics2D.drawImage(numberImage, x, padding, numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
+            x += numberImage.getWidth() * sizeMultiplier;
         }
+    }
+
+    private void drawBulletsLeft(Graphics2D graphics2D) {
+        int bulletsLeft = ship.getBulletsCapacity() - ship.getBulletFired();
+        String bulletsLeftString = String.format("%d", bulletsLeft);
+        int x_padding = 40;
+        int y_padding = 20;
+        int x = getScreenWidth() - graphics2D.getFontMetrics(arialFont).stringWidth(bulletsLeftString) - x_padding;
+        int y = y_padding + graphics2D.getFontMetrics(arialFont).getHeight() * 2 + graphics2D.getFontMetrics(arialFont).getHeight() / 2;
+
+        graphics2D.setFont(arialFont);
+        if (bulletsLeft == 0) {
+            graphics2D.setColor(Color.RED);
+        } else {
+            graphics2D.setColor(Color.WHITE);
+        }
+        graphics2D.drawString(bulletsLeftString, x, y);
+
+        // Draw the image to the right of the bullet counter
+        int imageX = x + graphics2D.getFontMetrics(arialFont).stringWidth(bulletsLeftString) + 5; // Adjust this as needed
+        int imageY = y - bulletScoreboardImage.getHeight(); // Adjust this as needed
+        graphics2D.drawImage(bulletScoreboardImage, imageX, imageY, null);
+    }
+
+    private void drawLives(Graphics2D graphics2D) {
+        int padding = 30; // padding from the corner
+        int x = padding;
+
+        int imageWidth = liveImage.getWidth() + 10; // double the width
+        int imageHeight = liveImage.getHeight() + 10; // double the height
+
+        for (int i = 0; i < ship.getLives(); i++) {
+            graphics2D.drawImage(liveImage, x, padding, imageWidth, imageHeight, null);
+            x += imageWidth + padding; // Move the x-coordinate for the next image
+        }
+    }
+
+    private void drawFloatingText(Graphics2D graphics2D, String text, Map<Character, BufferedImage> letterImages, int startX, int y, double floatTime) {
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            BufferedImage img = letterImages.get(ch);
+            if (img != null) {
+                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
+                graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
+            }
+        }
+    }
+
+    private void drawCenteredText(Graphics2D graphics2D, String text, Font font) {
+        graphics2D.setFont(font);
+        FontMetrics metrics = graphics2D.getFontMetrics(font);
+        int x = (getScreenWidth() - metrics.stringWidth(text)) / 2;
+        int y = (int)(getScreenHeight() * 0.75);
+        graphics2D.setColor(Color.WHITE);
+        graphics2D.drawString(text, x, y);
     }
 
     public static int getOriginalTileSize() {

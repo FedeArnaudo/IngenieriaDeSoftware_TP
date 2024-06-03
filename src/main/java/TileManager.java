@@ -20,7 +20,7 @@ public class TileManager {
         getTileImage();
     }
 
-    public void getTileImage(){
+    private void getTileImage(){
         try {
             for(int i = 0; i < IMAGES_NUMB; i ++){
                 Tile tile = new Tile();
@@ -29,11 +29,11 @@ public class TileManager {
             }
         }
         catch (IOException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error loading tile image", e);
         }
     }
 
-    public void draw(Graphics2D graphics2D) {
+    public void draw(Graphics2D graphics2D) throws InterruptedException {
         for(int i = 0; i < IMAGES_NUMB; i ++){
             graphics2D.drawImage(tiles.get(i).image, 0, (GamePanel.getOriginalTileSize() * i), gamePanel.getScreenWidth(), GamePanel.getOriginalTileSize(), null);
 

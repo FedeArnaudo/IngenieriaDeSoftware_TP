@@ -26,7 +26,7 @@ public class Meteor extends Entity{
         setMeteorImage();
     }
 
-    public ArrayList<BufferedImage> getBufferedImages() {
+    private ArrayList<BufferedImage> getBufferedImages() {
         return bufferedImages;
     }
 
@@ -48,7 +48,7 @@ public class Meteor extends Entity{
             bufferedImages.add(meteor3);
         }
         catch (IOException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error loading meteor image", e);
         }
     }
 

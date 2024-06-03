@@ -15,13 +15,12 @@ public class Bullet extends Entity{
 
     private final ArrayList<BufferedImage> bufferedImages;
     private final Random random;
-    public boolean shootFlag;           // to indicate that the bullet has been fired
+    private boolean shootFlag;
 
     public Bullet(GamePanel gamePanel, KeyHandler keyHandler, Ship ship){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.ship = ship;
-
         random = new Random();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
@@ -34,18 +33,18 @@ public class Bullet extends Entity{
         getBulletImage();
     }
 
-    public ArrayList<BufferedImage> getBufferedImages() {
+    private ArrayList<BufferedImage> getBufferedImages() {
         return bufferedImages;
     }
 
-    public void setDefaultValues(){
+    private void setDefaultValues(){
         x = ship.getX();
         y = ship.getY();
         speed = 12;
         direction = "up";
     }
 
-    public void getBulletImage() {
+    private void getBulletImage() {
         try {
             BufferedImage bullet1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet1.png")));
             BufferedImage bullet2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet2.png")));
@@ -98,7 +97,10 @@ public class Bullet extends Entity{
         if (!shootFlag) {
             x = ship.getX();
             y = ship.getY();
-            direction = "up";
+        } else if (y < 0) {
+            x = ship.getX();
+            y = ship.getY();
+            shootFlag = false;
         }
     }
 
@@ -145,5 +147,9 @@ public class Bullet extends Entity{
     @Override
     public int getSolidAreaDefaultY() {
         return solidAreaDefaultY;
+    }
+
+    public void setShootFlag(boolean shootFlag) {
+        this.shootFlag = shootFlag;
     }
 }

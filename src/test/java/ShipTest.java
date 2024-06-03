@@ -19,41 +19,41 @@ public class ShipTest {
     public void setUp() {
         gamePanel = mock(GamePanel.class);
         keyHandler = mock(KeyHandler.class);
-        ship = new Ship(gamePanel, keyHandler, 100);
+        ship = new Ship(gamePanel, keyHandler, 100, 4);
     }
 
     @Test
     public void shootingWhenSpacePressed() {
-        keyHandler.spacePressed = true;
+        when(keyHandler.getSpacePressed()).thenReturn(true);
         ship.update();
-        Assertions.assertEquals(1, ship.bulletFired);
+        Assertions.assertEquals(1, ship.getBulletFired());
     }
 
     @Test
     public void notShootingWhenSpaceNotPressed() {
-        keyHandler.spacePressed = false;
+        when(keyHandler.getSpacePressed()).thenReturn(false);
         ship.update();
-        Assertions.assertEquals(0, ship.bulletFired);
+        Assertions.assertEquals(0, ship.getBulletFired());
     }
 
     @Test
     public void notShootingWhenBulletCapacityReached() {
-        ship.bulletFired = ship.bulletsCapacity;
+        ship.setBulletFired(ship.getBulletsCapacity());
 
-        keyHandler.spacePressed = true;
+        when(keyHandler.getSpacePressed()).thenReturn(true);
 
         ship.update();
 
         // Verify that spacePressed is still true, indicating a shot was not fired
-        Assertions.assertTrue(keyHandler.spacePressed);
+        Assertions.assertTrue(keyHandler.getSpacePressed());
 
         // Verify that bulletFired has not increased
-        Assertions.assertEquals(ship.bulletsCapacity, ship.bulletFired);
+        Assertions.assertEquals(ship.getBulletsCapacity(), ship.getBulletFired());
     }
 
     @Test
     public void movingLeftWhenLeftPressed() {
-        keyHandler.leftPressed = true;
+        when(keyHandler.getLeftPressed()).thenReturn(true);
         int initialX = ship.getX();
         ship.update();
         Assertions.assertEquals(initialX - ship.getSpeed(), ship.getX());
@@ -61,7 +61,7 @@ public class ShipTest {
 
     @Test
     public void notMovingLeftWhenLeftNotPressed() {
-        keyHandler.leftPressed = false;
+        when(keyHandler.getLeftPressed()).thenReturn(false);
         int initialX = ship.getX();
         ship.update();
         Assertions.assertEquals(initialX, ship.getX());
@@ -69,7 +69,7 @@ public class ShipTest {
 
     @Test
     public void movingRightWhenRightPressed() {
-        keyHandler.rightPressed = true;
+        when(keyHandler.getRightPressed()).thenReturn(true);
         int initialX = ship.getX();
 
         when(gamePanel.getScreenWidth()).thenReturn(912);
@@ -81,7 +81,7 @@ public class ShipTest {
 
     @Test
     public void notMovingRightWhenRightNotPressed() {
-        keyHandler.rightPressed = false;
+        when(keyHandler.getRightPressed()).thenReturn(false);
         int initialX = ship.getX();
         ship.update();
         Assertions.assertEquals(initialX, ship.getX());
