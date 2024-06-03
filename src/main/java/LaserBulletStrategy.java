@@ -6,6 +6,7 @@ public class LaserBulletStrategy implements ShootingStrategy {
         if (ship.getBulletFired() < ship.getBulletsCapacity()) {
             ship.increaseBulletFired(1);
             ship.bullets.get(ship.getBulletFired()-1).setShootFlag(true);
+            ship.getShootSound().play();
         }
     }
 

@@ -8,6 +8,7 @@ public class DoubleBulletStrategy implements ShootingStrategy {
         if (ship.getBulletFired() < ship.getBulletsCapacity() - 1) {
             ship.increaseBulletFired(1);
             ship.bullets.get(ship.getBulletFired()-1).setShootFlag(true);
+            ship.getShootSound().play();
         }
     }
 

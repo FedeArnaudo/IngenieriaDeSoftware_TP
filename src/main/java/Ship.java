@@ -29,7 +29,7 @@ public class Ship extends Entity{
     private int lives;
     private int score;
     private int finalScore;
-    private int bulletSpeed;
+    private final int bulletSpeed;
     private final int cooldownTime;
     private int cooldownCounter;
     private int aliveCounter;
@@ -37,6 +37,10 @@ public class Ship extends Entity{
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
 
     private int collisionDebounce;
+
+    private final Sound shootSound;
+    private final Sound impactSound;
+    private final Sound explosionSound;
 
     public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int speed, int bulletsCapacity, int bulletSpeed, int cooldownTime){
         this.gamePanel = gamePanel;
@@ -57,6 +61,9 @@ public class Ship extends Entity{
         solidRectangle = new Rectangle(3, 5, 52, 40);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
+        shootSound = new Sound("res/sounds/laser_2.wav");
+        impactSound = new Sound("res/sounds/impact.wav");
+        explosionSound = new Sound("res/sounds/explosion.wav");
 
         setDefaultValues();
         initializeBullets();
@@ -146,6 +153,7 @@ public class Ship extends Entity{
                         gamePanel.getMeteors().get(i).setCollision(true);
                         collision = true;
                         lives--;
+                        impactSound.play();
                     }
                 }
             }
@@ -284,6 +292,14 @@ public class Ship extends Entity{
 
     public int getCooldownCounter() {
         return cooldownCounter;
+    }
+
+    public Sound getShootSound() {
+        return shootSound;
+    }
+
+    public Sound getExplosionSound() {
+        return explosionSound;
     }
 
     public void increaseBulletFired(int bulletFired) {

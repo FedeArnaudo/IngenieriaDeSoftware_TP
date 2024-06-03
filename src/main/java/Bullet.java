@@ -90,6 +90,7 @@ public class Bullet extends Entity{
 
                     gamePanel.getMeteors().get(i).setCollision(true);
                     this.collision = true;
+                    ship.getExplosionSound().play();
                 }
             }
         }

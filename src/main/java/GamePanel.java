@@ -90,6 +90,8 @@ public class GamePanel extends JPanel implements Runnable {
      * Variables for game over screen
      */
     private boolean gameOver = false;
+    private int gameOverCounter = 0;
+    private final Sound gameOverSound;
 
     /**
      * Array for scoreboard numbers
@@ -124,6 +126,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
 
+        gameOverSound = new Sound("res/sounds/game_over.wav");
         randomMeteorSpeed = new Random();
         dotCounter = 1;
 
@@ -194,7 +197,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        playMusic("res/music/background.wav");
+        Clip backgroundMusic = playMusic("res/music/welcome_screen_background.wav");
 
         double drawInterval = calculateDrawInterval();
         double nextDrawTime = System.nanoTime() + drawInterval;
@@ -211,19 +214,37 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             if (!isPaused) {
+                if (gameOver) {
+                    if (gameOverCounter == 0){
+                        backgroundMusic.stop();
+                        backgroundMusic = playMusic("res/music/game_over_background.wav");
+                        gameOverSound.play();
+                    }
+
+                    gameOverCounter++;
+                }
+
                 if (keyHandler.getEnterPressed() && welcomeScreen) {
                     welcomeScreen = false;
+
+                    backgroundMusic.stop();
+                    backgroundMusic = playMusic("res/music/background.wav");
+
                     keyHandler.setEnterPressed(false);
                 }
 
                 if (keyHandler.getEnterPressed() && gameOver) {
                     gameOver = false;
+                    gameOverCounter = 0;
 
                     ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_SPEED, SHIPS_BULLETS_CAPACITY, SHIPS_BULLET_SPEED, SHIP_COOLDOWN_TIME);
 
                     for (Meteor meteor: meteors){
                         meteor.setDefaultValues();
                     }
+
+                    backgroundMusic.stop();
+                    backgroundMusic = playMusic("res/music/background.wav");
 
                     keyHandler.setEnterPressed(false);
                 }
@@ -490,15 +511,16 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.drawString(text, x, y);
     }
 
-    public void playMusic(String filePath) {
+    public Clip playMusic(String filePath) {
         try {
             URL url = this.getClass().getClassLoader().getResource(filePath);
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
             Clip clip = AudioSystem.getClip();
             clip.open(audioIn);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
+            return clip;
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Could not play music", e);
         }
     }
 
