@@ -83,9 +83,12 @@ public class Bullet extends Entity{
         if(entityCollision != null){
             for(int i = 0; i < gamePanel.getMeteors().size(); i++){
                 if(gamePanel.getMeteors().get(i).equals(entityCollision)){
+                    if(!gamePanel.getMeteors().get(i).getCollision()){
+                        ship.increaseScore(1);
+                    }
+
                     gamePanel.getMeteors().get(i).setCollision(true);
                     this.collision = true;
-                    ship.increaseScore(1);
                 }
             }
         }

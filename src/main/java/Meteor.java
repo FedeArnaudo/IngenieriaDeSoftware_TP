@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Meteor extends Entity{
     private final GamePanel gamePanel;
     private final ArrayList<BufferedImage> bufferedImages;
-    private ArrayList<BufferedImage> explosionImages;
+    private final ArrayList<BufferedImage> explosionImages;
     private int explosionAnimationCounter;
     private final SecureRandom random ;
 
@@ -97,16 +97,16 @@ public class Meteor extends Entity{
 
     @Override
     public void draw(Graphics2D graphics2D){
+        BufferedImage bufferedImage;
         if(collision){
-            BufferedImage bufferedImage = explosionImages.get(random.nextInt(explosionImages.size()));
-            graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+            bufferedImage = explosionImages.get(random.nextInt(explosionImages.size()));
         }
         else {
-            BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
-            graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+            bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
             //graphics2D.setColor(Color.RED);
             //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
         }
+        graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
     }
 
     @Override
