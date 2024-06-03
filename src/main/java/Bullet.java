@@ -17,10 +17,12 @@ public class Bullet extends Entity{
     private final Random random;
     private boolean shootFlag;
 
-    public Bullet(GamePanel gamePanel, KeyHandler keyHandler, Ship ship){
+    public Bullet(GamePanel gamePanel, KeyHandler keyHandler, Ship ship, int speed){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.ship = ship;
+        this.speed = speed;
+
         random = new Random();
         collision = false;
         bufferedImages = new ArrayList<>();
@@ -40,7 +42,6 @@ public class Bullet extends Entity{
     private void setDefaultValues(){
         x = ship.getX();
         y = ship.getY();
-        speed = 12;
         direction = "up";
     }
 
@@ -84,7 +85,7 @@ public class Bullet extends Entity{
             for(int i = 0; i < gamePanel.getMeteors().size(); i++){
                 if(gamePanel.getMeteors().get(i).equals(entityCollision)){
                     if(!gamePanel.getMeteors().get(i).getCollision()){
-                        ship.increaseScore(1);
+                        ship.increaseScore(10);
                     }
 
                     gamePanel.getMeteors().get(i).setCollision(true);
@@ -117,10 +118,14 @@ public class Bullet extends Entity{
     }
 
     private void drawBullet(Graphics2D graphics2D) {
-        BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
-        graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-        //graphics2D.setColor(Color.RED);
-        //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
+        int shipPositionY = ship.getY();
+
+        if(getY() != shipPositionY){
+            BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
+            graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+            //graphics2D.setColor(Color.RED);
+            //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
+        }
     }
 
     @Override

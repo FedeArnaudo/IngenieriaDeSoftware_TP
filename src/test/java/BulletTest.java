@@ -23,7 +23,7 @@ public class BulletTest {
         gamePanel = mock(GamePanel.class);
         keyHandler = mock(KeyHandler.class);
         ship = mock(Ship.class);
-        bullet = new Bullet(gamePanel, keyHandler, ship);
+        bullet = new Bullet(gamePanel, keyHandler, ship, 12);
     }
 
     @Test

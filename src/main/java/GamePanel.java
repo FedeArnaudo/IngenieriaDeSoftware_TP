@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -28,9 +29,12 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * Game Settings
      */
-    private static final int METEORS_NUMBER = 12;
+    private static final int METEORS_NUMBER = 9;
+    private static final int METEORS_SPEED_THRESHOLD = 8;
     private static final int SHIPS_LIVES = 5;
+    private static final int SHIPS_SPEED = 6;
     private static final int SHIPS_BULLETS_CAPACITY = 100;
+    private static final int SHIPS_BULLET_SPEED = 20;
     private static final int SHIP_COOLDOWN_TIME = 30;
 
     /**
@@ -41,7 +45,7 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * This object represents the player's ship in the game.
      */
-    Ship ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_BULLETS_CAPACITY, SHIP_COOLDOWN_TIME);
+    Ship ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_SPEED, SHIPS_BULLETS_CAPACITY, SHIPS_BULLET_SPEED, SHIP_COOLDOWN_TIME);
 
     /**
      * This object represents the meteors that travel vertically across the map.
@@ -97,6 +101,8 @@ public class GamePanel extends JPanel implements Runnable{
     private int dotCounter;
     private BufferedImage collingIconImage;
 
+    private final Random randomMeteorSpeed;
+
     public GamePanel(){
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
@@ -104,6 +110,7 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
 
+        randomMeteorSpeed = new Random();
         dotCounter = 1;
 
         loadLetterImages();
@@ -162,7 +169,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     private void initializeMeteors() {
         for(int i = 0; i < METEORS_NUMBER; i++){
-            meteors.add(new Meteor(this));
+            meteors.add(new Meteor(this, randomMeteorSpeed.nextInt(METEORS_SPEED_THRESHOLD) + 2));
         }
     }
 

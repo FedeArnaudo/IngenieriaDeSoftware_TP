@@ -27,18 +27,22 @@ public class Ship extends Entity{
      */
     private int lives;
     private int score;
+    private int bulletSpeed;
     private final int cooldownTime;
     private int cooldownCounter;
+    private int aliveCounter;
 
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
 
     private int collisionDebounce;
 
-    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity, int cooldownTime){
+    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int speed, int bulletsCapacity, int bulletSpeed, int cooldownTime){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.lives = lives;
+        this.speed = speed;
         this.bulletsCapacity = bulletsCapacity;
+        this.bulletSpeed = bulletSpeed;
         this.cooldownTime = cooldownTime;
 
         score = 0;
@@ -59,13 +63,12 @@ public class Ship extends Entity{
     private void setDefaultValues(){
         x = 400;
         y = 850;
-        speed = 6;
         direction = "up";
     }
 
     private void initializeBullets() {
         for(int i = 0; i < bulletsCapacity; i++){
-            bullets.add(new Bullet(gamePanel, keyHandler, this));
+            bullets.add(new Bullet(gamePanel, keyHandler, this, bulletSpeed));
         }
         bulletFired = 0;
     }
@@ -99,7 +102,7 @@ public class Ship extends Entity{
         shootingStrategy.updateBullets(this);
         handleMovement();
         changeShootingStrategy();
-        resetScore();
+        updateScore();
 
         if(bulletFired == bulletsCapacity){
             cooldownCounter--;
@@ -160,8 +163,16 @@ public class Ship extends Entity{
         x += getSpeed();
     }
 
-    private void resetScore() {
-        if (score > 999999) {
+    private void updateScore() {
+        if (aliveCounter == 30){
+            score += 1;
+            aliveCounter = 0;
+        }
+        else {
+            aliveCounter++;
+        }
+
+        if (score > 999999 || lives == 0) {
             score = 0;
         }
     }

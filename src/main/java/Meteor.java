@@ -15,8 +15,10 @@ public class Meteor extends Entity{
     private int explosionAnimationCounter;
     private final SecureRandom random ;
 
-    public Meteor(GamePanel gamePanel){
+    public Meteor(GamePanel gamePanel, int speed){
         this.gamePanel = gamePanel;
+        this.speed = speed;
+
         random = new SecureRandom();
         collision = false;
         bufferedImages = new ArrayList<>();
@@ -38,7 +40,6 @@ public class Meteor extends Entity{
     public void setDefaultValues(){
         x = random.nextInt(GamePanel.getMaxScreenCol()) * gamePanel.getTileSize();
         y = - gamePanel.getTileSize();
-        speed = random.nextInt(6) + 2;
         collision = false;
         direction = "down";
     }
