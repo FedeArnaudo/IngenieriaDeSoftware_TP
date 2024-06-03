@@ -31,6 +31,7 @@ public class GamePanel extends JPanel implements Runnable{
     private static final int METEORS_NUMBER = 6;
     private static final int SHIPS_LIVES = 5;
     private static final int SHIPS_BULLETS_CAPACITY = 100;
+    private static final int SHIP_COOLDOWN_TIME = 45;
 
     /**
      * This object is used to handle keyboard inputs from the user.
@@ -40,7 +41,7 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * This object represents the player's ship in the game.
      */
-    Ship ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_BULLETS_CAPACITY);
+    Ship ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_BULLETS_CAPACITY, SHIP_COOLDOWN_TIME);
 
     /**
      * This object represents the meteors that travel vertically across the map.
@@ -90,6 +91,12 @@ public class GamePanel extends JPanel implements Runnable{
      */
     private BufferedImage liveImage;
 
+    /**
+     * Variables for cooldown countdown
+     */
+    private int dotCounter;
+    private BufferedImage collingIconImage;
+
     public GamePanel(){
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
@@ -97,10 +104,13 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
 
+        dotCounter = 1;
+
         loadLetterImages();
         loadNumberImages();
         loadBulletScoreboardImage();
         loadLiveImage();
+        loadCoolingImage();
         initializeMeteors();
     }
 
@@ -139,6 +149,14 @@ public class GamePanel extends JPanel implements Runnable{
             liveImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/lives/live.png")));
         } catch (IOException e) {
             throw new RuntimeException("Failed to load live image", e);
+        }
+    }
+
+    private void loadCoolingImage() {
+        try {
+            collingIconImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/cooling/cooling_icon.png")));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load cooling image", e);
         }
     }
 
@@ -255,7 +273,13 @@ public class GamePanel extends JPanel implements Runnable{
             }
 
             drawScore(graphics2D);
-            drawBulletsLeft(graphics2D);
+
+            if (ship.getBulletFired() == ship.getBulletsCapacity()) {
+                drawCooldownCountdown(graphics2D);
+            } else {
+                drawBulletsLeft(graphics2D);
+            }
+
             drawLives(graphics2D);
         }
     }
@@ -308,7 +332,7 @@ public class GamePanel extends JPanel implements Runnable{
         int y = y_padding + graphics2D.getFontMetrics(arialFont).getHeight() * 2 + graphics2D.getFontMetrics(arialFont).getHeight() / 2;
 
         graphics2D.setFont(arialFont);
-        if (bulletsLeft == 0) {
+        if (bulletsLeft <= ship.getBulletsCapacity() * 0.1) {
             graphics2D.setColor(Color.RED);
         } else {
             graphics2D.setColor(Color.WHITE);
@@ -332,6 +356,42 @@ public class GamePanel extends JPanel implements Runnable{
             graphics2D.drawImage(liveImage, x, padding, imageWidth, imageHeight, null);
             x += imageWidth + padding; // Move the x-coordinate for the next image
         }
+    }
+
+    public void drawCooldownCountdown(Graphics2D graphics2D) {
+        String cooldownCountdownString = String.format("%d", (ship.getCooldownCounter() / 60) + 1);
+        int x_padding = 40;
+        int y_padding = 20;
+        int x = getScreenWidth() - graphics2D.getFontMetrics(arialFont).stringWidth(cooldownCountdownString) - x_padding;
+        int y = y_padding + graphics2D.getFontMetrics(arialFont).getHeight() * 2 + graphics2D.getFontMetrics(arialFont).getHeight() / 2;
+
+        graphics2D.setFont(arialFont);
+        graphics2D.setColor(Color.BLUE);
+        graphics2D.drawString(cooldownCountdownString, x, y);
+
+        // Draw "COOLING" text and dots
+        String coolingText = "COOLING";
+
+        StringBuilder dotsBuilder = new StringBuilder();
+        for (int i = 0; i < dotCounter; i++) {
+            dotsBuilder.append(".");
+        }
+        String dots = dotsBuilder.toString();
+
+        int coolingX = getScreenWidth() - x_padding * 2 - graphics2D.getFontMetrics(arialFont).stringWidth(coolingText) - 40; // Subtract 20 to move the text 20 pixels to the left
+        graphics2D.drawString(coolingText + dots, coolingX, y);
+
+        int imageX = x + graphics2D.getFontMetrics(arialFont).stringWidth(cooldownCountdownString) + 5; // Adjust this as needed
+        int imageY = y - collingIconImage.getHeight() + 1; // Adjust this as needed
+        graphics2D.drawImage(collingIconImage, imageX, imageY, null);
+
+        if (ship.getCooldownCounter() % 20 == 0) {
+            dotCounter = (dotCounter % 3) + 1;
+        }
+    }
+
+    public static int getFps() {
+        return FPS;
     }
 
     private void drawFloatingText(Graphics2D graphics2D, String text, Map<Character, BufferedImage> letterImages, int startX, int y, double floatTime) {

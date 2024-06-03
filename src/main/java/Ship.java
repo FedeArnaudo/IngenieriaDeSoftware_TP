@@ -27,18 +27,22 @@ public class Ship extends Entity{
      */
     private int lives;
     private int score;
+    private final int cooldownTime;
+    private int cooldownCounter;
 
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
 
     private int collisionDebounce;
 
-    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity){
+    public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int bulletsCapacity, int cooldownTime){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.lives = lives;
         this.bulletsCapacity = bulletsCapacity;
+        this.cooldownTime = cooldownTime;
 
         score = 0;
+        cooldownCounter = cooldownTime * GamePanel.getFps();
         random = new Random();
         collision = false;
         collisionDebounce = 0;
@@ -96,6 +100,15 @@ public class Ship extends Entity{
         handleMovement();
         changeShootingStrategy();
         resetScore();
+
+        if(bulletFired == bulletsCapacity){
+            cooldownCounter--;
+        }
+
+        if(cooldownCounter == 0){
+            bulletFired = 50;
+            cooldownCounter = cooldownTime * GamePanel.getFps();
+        }
     }
 
     private void handleMovement() {
@@ -240,6 +253,10 @@ public class Ship extends Entity{
 
     public int getBulletFired() {
         return bulletFired;
+    }
+
+    public int getCooldownCounter() {
+        return cooldownCounter;
     }
 
     public void increaseBulletFired(int bulletFired) {
