@@ -88,7 +88,7 @@ public class ShipTest {
     }
     @Test
     public void detectCollisionBtwBulletMeteor(){
-        keyHandler.spacePressed = true;
+        when(keyHandler.getSpacePressed()).thenReturn(true);
         ship.update();
     }
 }

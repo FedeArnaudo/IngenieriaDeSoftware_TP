@@ -38,7 +38,7 @@ public class Ship extends Entity{
 
         score = 0;
         random = new Random();
-        collisionOn = true;
+        collision = true;
         bufferedImages = new ArrayList<>();
         solidRectangle = new Rectangle(3, 5, 52, 40);
         solidAreaDefaultX = solidRectangle.x;
@@ -47,10 +47,6 @@ public class Ship extends Entity{
         setDefaultValues();
         initializeBullets();
         setPlayerImage();
-    }
-
-    private ArrayList<BufferedImage> getBufferedImages() {
-        return bufferedImages;
     }
 
     private void setDefaultValues(){
@@ -203,6 +199,11 @@ public class Ship extends Entity{
     @Override
     public int getSolidAreaDefaultY() {
         return solidAreaDefaultY;
+    }
+
+    @Override
+    public boolean getCollision() {
+        return collision;
     }
 
     public int getScore() {

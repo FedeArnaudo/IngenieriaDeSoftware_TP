@@ -16,7 +16,7 @@ public class Meteor extends Entity{
     public Meteor(GamePanel gamePanel){
         this.gamePanel = gamePanel;
         random = new SecureRandom();
-        collisionOn = true;
+        collision = true;
         bufferedImages = new ArrayList<>();
         solidRectangle = new Rectangle(18, 36, 20, 20);
         solidAreaDefaultX = solidRectangle.x;
@@ -102,5 +102,10 @@ public class Meteor extends Entity{
     @Override
     public int getSolidAreaDefaultY() {
         return solidAreaDefaultY;
+    }
+
+    @Override
+    public boolean getCollision() {
+        return collision;
     }
 }

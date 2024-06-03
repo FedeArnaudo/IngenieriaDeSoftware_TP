@@ -10,7 +10,7 @@ public abstract class Entity {
     protected Rectangle solidRectangle;
     protected int solidAreaDefaultX;
     protected int solidAreaDefaultY;
-    protected boolean collisionOn = false;
+    protected boolean collision = false;
 
     public abstract void update();
     public abstract void draw(Graphics2D graphics2D);
@@ -22,4 +22,5 @@ public abstract class Entity {
     public abstract Rectangle getSolidRectangle();
     public abstract int getSolidAreaDefaultX();
     public abstract int getSolidAreaDefaultY();
+    public abstract boolean getCollision();
 }

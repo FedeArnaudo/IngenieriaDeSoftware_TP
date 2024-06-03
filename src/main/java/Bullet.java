@@ -22,7 +22,7 @@ public class Bullet extends Entity{
         this.keyHandler = keyHandler;
         this.ship = ship;
         random = new Random();
-        collisionOn = true;
+        collision = false;
         bufferedImages = new ArrayList<>();
         solidRectangle = new Rectangle(24, 18, (gamePanel.getTileSize() - 48), (gamePanel.getTileSize() - 36));
         solidAreaDefaultX = solidRectangle.x;
@@ -83,8 +83,8 @@ public class Bullet extends Entity{
         if(entityCollision != null){
             for(int i = 0; i < gamePanel.meteors.size(); i++){
                 if(gamePanel.meteors.get(i).equals(entityCollision)){
-                    gamePanel.meteors.remove(i);
-                    this.collisionOn = false;
+                    gamePanel.getMeteors().remove(i);
+                    this.collision = true;
                 }
             }
         }
@@ -97,7 +97,7 @@ public class Bullet extends Entity{
         if (!shootFlag) {
             x = ship.getX();
             y = ship.getY();
-        } else if (y < 0) {
+        } else if (y < 0 || collision) {
             x = ship.getX();
             y = ship.getY();
             shootFlag = false;
@@ -106,7 +106,9 @@ public class Bullet extends Entity{
 
     @Override
     public void draw(Graphics2D graphics2D){
-        drawBullet(graphics2D);
+        if(!getCollision()) {
+            drawBullet(graphics2D);
+        }
     }
 
     private void drawBullet(Graphics2D graphics2D) {
@@ -147,6 +149,11 @@ public class Bullet extends Entity{
     @Override
     public int getSolidAreaDefaultY() {
         return solidAreaDefaultY;
+    }
+
+    @Override
+    public boolean getCollision() {
+        return collision;
     }
 
     public void setShootFlag(boolean shootFlag) {

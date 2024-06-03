@@ -104,6 +104,11 @@ public class Explosion extends Entity{
     }
 
     @Override
+    public boolean getCollision() {
+        return collision;
+    }
+
+    @Override
     public void update() {  }
 
     @Override

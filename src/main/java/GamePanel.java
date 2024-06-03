@@ -57,12 +57,11 @@ public class GamePanel extends JPanel implements Runnable{
      */
     Thread gameThread;
 
-    Explosion explosion = new Explosion(this);
-
+    /**
+     * This object is used to check for collisions between entities.
+     */
     public CollisionChecker collisionChecker = new CollisionChecker(this);
-    private double timer = 0;
-    private int drawCount = 0;
-    private long lastTime = System.nanoTime();
+
     /**
      * Variables for welcome screen
      */
@@ -261,8 +260,11 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     private void drawGameElements(Graphics2D graphics2D) {
-        // Background
-        tileManager.draw(graphics2D);
+        try {
+            tileManager.draw(graphics2D);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Failed to draw game elements", e);
+        }
 
         if (welcomeScreen){
             drawWelcomeScreen(graphics2D);
@@ -392,5 +394,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     public int getScreenHeight() {
         return SCREEN_HEIGHT;
+    }
+
+    public ArrayList<Meteor> getMeteors() {
+        return meteors;
     }
 }
