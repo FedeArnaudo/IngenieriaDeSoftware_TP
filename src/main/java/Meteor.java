@@ -18,7 +18,7 @@ public class Meteor extends Entity{
         random = new SecureRandom();
         collisionOn = true;
         bufferedImages = new ArrayList<>();
-        solidRectangle = new Rectangle(18, 36, 18, 18);
+        solidRectangle = new Rectangle(18, 36, 20, 20);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
 
@@ -48,7 +48,7 @@ public class Meteor extends Entity{
             bufferedImages.add(meteor3);
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -65,8 +65,8 @@ public class Meteor extends Entity{
 
         BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
         graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-        graphics2D.setColor(Color.RED);
-        graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
+        //graphics2D.setColor(Color.RED);
+        //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
 
     @Override
@@ -82,5 +82,25 @@ public class Meteor extends Entity{
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    @Override
+    public String getDirection() {
+        return direction;
+    }
+
+    @Override
+    public Rectangle getSolidRectangle() {
+        return solidRectangle;
+    }
+
+    @Override
+    public int getSolidAreaDefaultX() {
+        return solidAreaDefaultX;
+    }
+
+    @Override
+    public int getSolidAreaDefaultY() {
+        return solidAreaDefaultY;
     }
 }

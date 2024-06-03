@@ -68,7 +68,7 @@ public class Ship extends Entity{
             bufferedImages.add(ship5);
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -152,8 +152,8 @@ public class Ship extends Entity{
     private void drawPlayer(Graphics2D graphics2D) {
         BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
         graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-        graphics2D.setColor(Color.RED);
-        graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
+        //graphics2D.setColor(Color.RED);
+        //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
 
     @Override
@@ -167,5 +167,25 @@ public class Ship extends Entity{
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    @Override
+    public String getDirection() {
+        return direction;
+    }
+
+    @Override
+    public Rectangle getSolidRectangle() {
+        return solidRectangle;
+    }
+
+    @Override
+    public int getSolidAreaDefaultX() {
+        return solidAreaDefaultX;
+    }
+
+    @Override
+    public int getSolidAreaDefaultY() {
+        return solidAreaDefaultY;
     }
 }

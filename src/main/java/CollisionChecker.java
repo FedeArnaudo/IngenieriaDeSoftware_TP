@@ -1,15 +1,15 @@
 package main.java;
 
-import java.util.ArrayList;
-
 public class CollisionChecker {
-    private GamePanel gamePanel;
+    GamePanel gamePanel;
+
     public CollisionChecker(GamePanel gamePanel){
         this.gamePanel = gamePanel;
     }
 
     public Entity detectObjet(Entity entity){
         Entity entityTemp = null;
+
         try{
             for(Meteor meteor: gamePanel.meteors){
                 if(checkIntersect(entity, meteor)){
@@ -17,6 +17,7 @@ public class CollisionChecker {
                     break;
                 }
             }
+
             if(entityTemp == null){
                 // Checkeo si impacto contra otro objeto.
             }
@@ -31,40 +32,38 @@ public class CollisionChecker {
         boolean crashed = false;
 
         if(entity2 != null){
-            entity1.solidRectangle.x = entity1.x + entity1.solidRectangle.x;
-            entity1.solidRectangle.y = entity1.y + entity1.solidRectangle.y;
+            entity1.getSolidRectangle().setLocation(entity1.getX() + (int)entity1.getSolidRectangle().getX(),entity1.getY() + (int)entity1.getSolidRectangle().getY());
+            entity2.getSolidRectangle().setLocation(entity2.getX() + (int)entity2.getSolidRectangle().getX(),entity2.getY() + (int)entity2.getSolidRectangle().getY());
 
-            entity2.solidRectangle.x = entity2.x + entity2.solidRectangle.x;
-            entity2.solidRectangle.y = entity2.y + entity2.solidRectangle.y;
-
-            switch (entity1.direction){
+            switch (entity1.getDirection()){
                 case "up":
-                    if(entity1.solidRectangle.intersects(entity2.solidRectangle)){
-                        System.out.println("Tenemos una collision de frente");
+                    if(entity1.getSolidRectangle().intersects(entity2.getSolidRectangle())){
+                        System.out.println("Front collision");
                         crashed = true;
                     }
                     break;
+
                 case "left":
-                    entity1.solidRectangle.x -= entity1.speed;
-                    if(entity1.solidRectangle.intersects(entity2.solidRectangle)){
-                        System.out.println("Tenemos una collision a la izquierda");
+                    entity1.getSolidRectangle().setLocation((int)entity1.getSolidRectangle().getX() - entity1.getSpeed(), (int)entity1.getSolidRectangle().getY());
+                    if(entity1.getSolidRectangle().intersects(entity2.getSolidRectangle())){
+                        System.out.println("Left collision");
                         crashed = true;
                     }
                     break;
+
                 case "right":
-                    entity1.solidRectangle.x += entity1.speed;
-                    if(entity1.solidRectangle.intersects(entity2.solidRectangle)){
-                        System.out.println("Tenemos una collision a la derecha");
+                    entity1.getSolidRectangle().setLocation((int)entity1.getSolidRectangle().getX() + entity1.getSpeed(), (int)entity1.getSolidRectangle().getY());
+                    if(entity1.getSolidRectangle().intersects(entity2.getSolidRectangle())){
+                        System.out.println("Right collision");
                         crashed = true;
                     }
                     break;
             }
-            entity1.solidRectangle.x = entity1.solidAreaDefaultX;
-            entity1.solidRectangle.y = entity1.solidAreaDefaultY;
 
-            entity2.solidRectangle.x = entity2.solidAreaDefaultX;
-            entity2.solidRectangle.y = entity2.solidAreaDefaultY;
+            entity1.getSolidRectangle().setLocation(entity1.getSolidAreaDefaultX(),entity1.getSolidAreaDefaultY());
+            entity2.getSolidRectangle().setLocation(entity2.getSolidAreaDefaultX(),entity2.getSolidAreaDefaultY());
         }
+
         return crashed;
     }
 }

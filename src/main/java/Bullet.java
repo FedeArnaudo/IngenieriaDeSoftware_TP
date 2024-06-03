@@ -47,20 +47,20 @@ public class Bullet extends Entity{
 
     public void getBulletImage() {
         try {
-            BufferedImage bullet1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet.png")));
-            //BufferedImage bullet2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet2.png")));
-            //BufferedImage bullet3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet3.png")));
-            //BufferedImage bullet4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet4.png")));
-            //BufferedImage bullet5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet5.png")));
+            BufferedImage bullet1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet1.png")));
+            BufferedImage bullet2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet2.png")));
+            BufferedImage bullet3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet3.png")));
+            BufferedImage bullet4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet4.png")));
+            BufferedImage bullet5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/bullet/bullet5.png")));
 
             bufferedImages.add(bullet1);
-            //bufferedImages.add(bullet2);
-            //bufferedImages.add(bullet3);
-            //bufferedImages.add(bullet4);
-            //bufferedImages.add(bullet5);
+            bufferedImages.add(bullet2);
+            bufferedImages.add(bullet3);
+            bufferedImages.add(bullet4);
+            bufferedImages.add(bullet5);
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException("Error loading bullet image", e);
         }
     }
 
@@ -90,6 +90,7 @@ public class Bullet extends Entity{
             }
         }
     }
+
     /**
      * This method updates the position of the bullet when it has not yet been fired
      */
@@ -109,8 +110,8 @@ public class Bullet extends Entity{
     private void drawBullet(Graphics2D graphics2D) {
         BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
         graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-        graphics2D.setColor(Color.RED);
-        graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
+        //graphics2D.setColor(Color.RED);
+        //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
 
     @Override
@@ -124,5 +125,25 @@ public class Bullet extends Entity{
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    @Override
+    public String getDirection() {
+        return direction;
+    }
+
+    @Override
+    public Rectangle getSolidRectangle() {
+        return solidRectangle;
+    }
+
+    @Override
+    public int getSolidAreaDefaultX() {
+        return solidAreaDefaultX;
+    }
+
+    @Override
+    public int getSolidAreaDefaultY() {
+        return solidAreaDefaultY;
     }
 }

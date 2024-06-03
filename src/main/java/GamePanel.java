@@ -45,6 +45,7 @@ public class GamePanel extends JPanel implements Runnable{
      * This object is used to manage the game thread.
      */
     Thread gameThread;
+
     Explosion explosion = new Explosion(this);
 
     public CollisionChecker collisionChecker = new CollisionChecker(this);

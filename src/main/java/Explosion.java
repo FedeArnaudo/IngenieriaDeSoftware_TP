@@ -8,34 +8,33 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Explosion extends Entity{
-    private GamePanel gamePanel;
-    private final Entity entity;
+    private final GamePanel gamePanel;
     private int sequence;
     private final ArrayList<BufferedImage> bufferedImages;
+
     public Explosion(GamePanel gamePanel){
         this.gamePanel = gamePanel;
-        entity = null;
+
         bufferedImages = new ArrayList<>();
+        sequence = 0;
 
         setDefaultValues();
         setExplosionImage();
-        sequence = 0;
     }
+
     public void setDefaultValues(){
         //x = entity.getX();
         //y = entity.getY();
     }
-    public ArrayList<BufferedImage> getBufferedImages() {
-        return bufferedImages;
-    }
+
     public void setExplosionImage() {
         try {
-            BufferedImage exp1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/Explosion1.png")));
-            BufferedImage exp2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/Explosion1.png")));
-            BufferedImage exp3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/Explosion1.png")));
-            BufferedImage exp4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/Explosion1.png")));
-            BufferedImage exp5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/Explosion1.png")));
-            BufferedImage exp6 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/Explosion1.png")));
+            BufferedImage exp1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion1.png")));
+            BufferedImage exp2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion2.png")));
+            BufferedImage exp3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion3.png")));
+            BufferedImage exp4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion4.png")));
+            BufferedImage exp5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion5.png")));
+            BufferedImage exp6 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion6.png")));
 
             bufferedImages.add(exp1);
             bufferedImages.add(exp1);
@@ -53,15 +52,19 @@ public class Explosion extends Entity{
             bufferedImages.add(exp6);
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+    }
+
+    public ArrayList<BufferedImage> getBufferedImages() {
+        return bufferedImages;
     }
 
     public int getSequence() {
         return sequence;
     }
 
-    public void setSequence() {
+    public void increaseSequence() {
         sequence++;
     }
 
@@ -81,6 +84,26 @@ public class Explosion extends Entity{
     }
 
     @Override
+    public String getDirection() {
+        return direction;
+    }
+
+    @Override
+    public Rectangle getSolidRectangle() {
+        return solidRectangle;
+    }
+
+    @Override
+    public int getSolidAreaDefaultX() {
+        return solidAreaDefaultX;
+    }
+
+    @Override
+    public int getSolidAreaDefaultY() {
+        return solidAreaDefaultY;
+    }
+
+    @Override
     public void update() {  }
 
     @Override
@@ -88,7 +111,7 @@ public class Explosion extends Entity{
         if(getSequence() < getBufferedImages().size()){
             BufferedImage bufferedImage = bufferedImages.get(sequence);
             graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-            setSequence();
+            increaseSequence();
         }
     }
 }
