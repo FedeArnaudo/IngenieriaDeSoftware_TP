@@ -16,7 +16,7 @@ public class Meteor extends Entity{
     public Meteor(GamePanel gamePanel){
         this.gamePanel = gamePanel;
         random = new SecureRandom();
-        collision = true;
+        collision = false;
         bufferedImages = new ArrayList<>();
         solidRectangle = new Rectangle(18, 36, 20, 20);
         solidAreaDefaultX = solidRectangle.x;
@@ -34,6 +34,7 @@ public class Meteor extends Entity{
         x = random.nextInt(GamePanel.getMaxScreenCol()) * gamePanel.getTileSize();
         y = - gamePanel.getTileSize();
         speed = random.nextInt(6) + 2;
+        collision = false;
         direction = "down";
     }
 
@@ -55,7 +56,7 @@ public class Meteor extends Entity{
     @Override
     public void update(){
         y += getSpeed();
-        if(y > gamePanel.getScreenHeight()){
+        if(y > gamePanel.getScreenHeight() || collision){
             setDefaultValues();
         }
     }
@@ -107,5 +108,9 @@ public class Meteor extends Entity{
     @Override
     public boolean getCollision() {
         return collision;
+    }
+
+    public void setCollision(boolean collision) {
+        this.collision = collision;
     }
 }

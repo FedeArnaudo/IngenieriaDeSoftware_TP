@@ -81,10 +81,11 @@ public class Bullet extends Entity{
         // detectObject
         Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
         if(entityCollision != null){
-            for(int i = 0; i < gamePanel.meteors.size(); i++){
-                if(gamePanel.meteors.get(i).equals(entityCollision)){
-                    gamePanel.getMeteors().remove(i);
+            for(int i = 0; i < gamePanel.getMeteors().size(); i++){
+                if(gamePanel.getMeteors().get(i).equals(entityCollision)){
+                    gamePanel.getMeteors().get(i).setCollision(true);
                     this.collision = true;
+                    ship.increaseScore(1);
                 }
             }
         }

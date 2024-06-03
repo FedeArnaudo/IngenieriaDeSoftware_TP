@@ -202,30 +202,8 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     private void updateMeteors() {
-        if(!meteors.isEmpty()){
-            for (Meteor meteor: meteors){
-                if(meteor.y == -TILE_SIZE){
-                    resetMeteorPosition(meteor);
-                }
-                meteor.update();
-            }
-        }
-        else {
-            initializeMeteors();
-        }
-    }
-
-    private void resetMeteorPosition(Meteor meteor) {
-        for(int i = 0; i < meteors.size(); i++){
-            while (true){
-                if(meteor.equals(meteors.get(i)) || (!meteor.equals(meteors.get(i)) && meteor.x != meteors.get(i).x)){
-                    break;
-                }
-                else if(!meteor.equals(meteors.get(i)) && meteor.x == meteors.get(i).x){
-                    meteor.setDefaultValues();
-                    i = 0;
-                }
-            }
+        for (Meteor meteor: meteors){
+            meteor.update();
         }
     }
 

@@ -25,7 +25,7 @@ public class Ship extends Entity{
     /**
      * Variables for player
      */
-    private final int lives;
+    private int lives;
     private int score;
 
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
@@ -38,7 +38,7 @@ public class Ship extends Entity{
 
         score = 0;
         random = new Random();
-        collision = true;
+        collision = false;
         bufferedImages = new ArrayList<>();
         solidRectangle = new Rectangle(3, 5, 52, 40);
         solidAreaDefaultX = solidRectangle.x;
@@ -113,8 +113,15 @@ public class Ship extends Entity{
         else { direction = "up";}
 
         // detectObject
-        if(gamePanel.collisionChecker.detectObjet(this) != null){
-
+        Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
+        if(entityCollision != null){
+            for(int i = 0; i < gamePanel.getMeteors().size(); i++){
+                if(gamePanel.getMeteors().get(i).equals(entityCollision)){
+                    gamePanel.getMeteors().get(i).setCollision(true);
+                    //this.collision = true;
+                    lives--;
+                }
+            }
         }
     }
 
@@ -228,5 +235,9 @@ public class Ship extends Entity{
 
     public void setBulletFired(int bulletFired) {
         this.bulletFired = bulletFired;
+    }
+
+    public void increaseScore(int score) {
+        this.score += score;
     }
 }
