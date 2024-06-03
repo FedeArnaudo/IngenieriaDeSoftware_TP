@@ -13,6 +13,7 @@ public class Ship extends Entity{
     KeyHandler keyHandler;
 
     private final ArrayList<BufferedImage> bufferedImages;
+    private BufferedImage damagedShipImage;
     private final Random random;
 
     /**
@@ -92,6 +93,8 @@ public class Ship extends Entity{
             bufferedImages.add(ship3);
             bufferedImages.add(ship4);
             bufferedImages.add(ship5);
+
+            damagedShipImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/damaged_ship.png")));
         }
         catch (IOException e){
             throw new RuntimeException("Could not load player image", e);
@@ -210,8 +213,13 @@ public class Ship extends Entity{
     }
 
     private void drawPlayer(Graphics2D graphics2D) {
-        BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
-        graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        if (collision && collisionDebounce <= 10){
+            graphics2D.drawImage(damagedShipImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        }
+        else {
+            BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
+            graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        }
         //graphics2D.setColor(Color.RED);
         //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
