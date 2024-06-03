@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Meteor extends Entity{
     private final GamePanel gamePanel;
     private final ArrayList<BufferedImage> bufferedImages;
-    private BufferedImage explosionImage;
+    private ArrayList<BufferedImage> explosionImages;
     private int explosionAnimationCounter;
     private final SecureRandom random ;
 
@@ -20,6 +20,7 @@ public class Meteor extends Entity{
         random = new SecureRandom();
         collision = false;
         bufferedImages = new ArrayList<>();
+        explosionImages = new ArrayList<>();
         solidRectangle = new Rectangle(18, 36, 20, 20);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
@@ -59,7 +60,19 @@ public class Meteor extends Entity{
 
     private void setExplosionImage() {
         try {
-            explosionImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion1.png")));
+            BufferedImage explosion1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion1.png")));
+            BufferedImage explosion2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion2.png")));
+            BufferedImage explosion3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion3.png")));
+            BufferedImage explosion4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion4.png")));
+            BufferedImage explosion5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion5.png")));
+            BufferedImage explosion6 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/explosion/explosion6.png")));
+
+            explosionImages.add(explosion1);
+            explosionImages.add(explosion2);
+            explosionImages.add(explosion3);
+            explosionImages.add(explosion4);
+            explosionImages.add(explosion5);
+            explosionImages.add(explosion6);
         }
         catch (IOException e){
             throw new RuntimeException("Error loading explosion image", e);
@@ -85,7 +98,8 @@ public class Meteor extends Entity{
     @Override
     public void draw(Graphics2D graphics2D){
         if(collision){
-            graphics2D.drawImage(explosionImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+            BufferedImage bufferedImage = explosionImages.get(random.nextInt(explosionImages.size()));
+            graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
         }
         else {
             BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
