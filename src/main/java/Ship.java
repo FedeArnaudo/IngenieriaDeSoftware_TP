@@ -27,6 +27,7 @@ public class Ship extends Entity{
      */
     private int lives;
     private int score;
+    private int finalScore;
     private int bulletSpeed;
     private final int cooldownTime;
     private int cooldownCounter;
@@ -46,6 +47,7 @@ public class Ship extends Entity{
         this.cooldownTime = cooldownTime;
 
         score = 0;
+        finalScore = 0;
         cooldownCounter = cooldownTime * GamePanel.getFps();
         random = new Random();
         collision = false;
@@ -173,6 +175,7 @@ public class Ship extends Entity{
         }
 
         if (score > 999999 || lives == 0) {
+            finalScore = score;
             score = 0;
         }
     }
@@ -253,6 +256,10 @@ public class Ship extends Entity{
 
     public int getScore() {
         return score;
+    }
+
+    public int getFinalScore() {
+        return finalScore;
     }
 
     public int getLives() {

@@ -18,12 +18,12 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel implements Runnable {
 
     /**
      * Screen Settings
      */
-    private static final int ORIGINAL_TILE_SIZE  = 19;   //  19x19
+    private static final int ORIGINAL_TILE_SIZE = 19;   //  19x19
     private static final int SCALE = 3;
     private static final int MAX_SCREEN_COL = 16;
     private static final int MAX_SCREEN_ROW = 16;
@@ -85,6 +85,11 @@ public class GamePanel extends JPanel implements Runnable{
      * Variables for pause screen
      */
     private boolean isPaused = false;
+
+    /**
+     * Variables for game over screen
+     */
+    private boolean gameOver = false;
 
     /**
      * Array for scoreboard numbers
@@ -195,7 +200,7 @@ public class GamePanel extends JPanel implements Runnable{
         double nextDrawTime = System.nanoTime() + drawInterval;
 
         while (gameThread != null) {
-            if (!welcomeScreen) {
+            if (!welcomeScreen && !gameOver) {
                 if (keyHandler.getPPressed() && !isPaused) {
                     isPaused = true;
                     keyHandler.setPPressed(false);
@@ -211,7 +216,19 @@ public class GamePanel extends JPanel implements Runnable{
                     keyHandler.setEnterPressed(false);
                 }
 
-                if (!welcomeScreen) {
+                if (keyHandler.getEnterPressed() && gameOver) {
+                    gameOver = false;
+
+                    ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_SPEED, SHIPS_BULLETS_CAPACITY, SHIPS_BULLET_SPEED, SHIP_COOLDOWN_TIME);
+
+                    for (Meteor meteor: meteors){
+                        meteor.setDefaultValues();
+                    }
+
+                    keyHandler.setEnterPressed(false);
+                }
+
+                if (!welcomeScreen && !gameOver) {
                     updateGame();
                 }
             }
@@ -231,6 +248,10 @@ public class GamePanel extends JPanel implements Runnable{
     private void updateGame() {
         updatePlayer();
         updateMeteors();
+
+        if (ship.getLives() <= 0) {
+            gameOver = true;
+        }
 
         if (ship.getScore() / 100 > lastScore) {
             scoreZoom = 1.5;
@@ -288,6 +309,9 @@ public class GamePanel extends JPanel implements Runnable{
         if (welcomeScreen){
             drawWelcomeScreen(graphics2D);
         }
+        else if (gameOver){
+            drawGameOverScreen(graphics2D);
+        }
         else {
             ship.draw(graphics2D);
 
@@ -330,6 +354,30 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Draw the "press P to resume" text
         drawCenteredText(graphics2D, "PRESS P TO RESUME", new Font("Courier New", Font.PLAIN, 20));
+    }
+
+    private void drawGameOverScreen(Graphics2D graphics2D) {
+        String word = "game over";
+        int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
+        int y = 350;
+
+        drawFloatingText(graphics2D, word, letterImages, startX, y, floatTime);
+
+        // Draw the "press enter to restart" text
+        drawCenteredText(graphics2D, "PRESS ENTER TO RESTART", new Font("Courier New", Font.PLAIN, 20));
+
+        // Draw the score
+        String scoreText = String.format("%06d", ship.getFinalScore());
+        int sizeMultiplier = 2; // make the score bigger
+        int totalWidth = numberImages.get(0).getWidth() * sizeMultiplier * scoreText.length();
+        int x = (getScreenWidth() - totalWidth) / 2; // center the score
+
+        for (char c : scoreText.toCharArray()) {
+            int number = Character.getNumericValue(c);
+            BufferedImage numberImage = numberImages.get(number);
+            graphics2D.drawImage(numberImage, x, (int)(getScreenHeight() * 0.65), (int)(numberImage.getWidth() * sizeMultiplier), (int)(numberImage.getHeight() * sizeMultiplier), null);
+            x += numberImage.getWidth() * sizeMultiplier;
+        }
     }
 
     private void drawScore(Graphics2D graphics2D) {
