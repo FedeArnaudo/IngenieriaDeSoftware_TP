@@ -252,6 +252,14 @@ public class Ship extends Entity{
         //graphics2D.drawRect(x + solidAreaDefaultX, y + solidAreaDefaultY, solidRectangle.width, solidRectangle.height);
     }
 
+    public void drawWelcomeScreen(Graphics2D graphics2D){
+        int x = gamePanel.getScreenWidth() / 2 + 150;
+        int y = (int)(gamePanel.getScreenHeight() * 0.24);
+
+        BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
+        graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+    }
+
     @Override
     public int getX() {
         return x;

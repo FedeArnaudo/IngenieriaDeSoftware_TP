@@ -81,6 +81,11 @@ public class GamePanel extends JPanel implements Runnable {
     private final Map<Character, BufferedImage> letterImages = new HashMap<>();
     private double floatTime = 0;
     private Sound startGameSound;
+    BufferedImage keyUpImage;
+    BufferedImage keyDownImage;
+    BufferedImage keyRightImage;
+    BufferedImage keyLeftImage;
+    BufferedImage keySpaceImage;
 
     /**
      * Variables for pause screen
@@ -135,6 +140,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         loadLetterImages();
         loadNumberImages();
+        loadKeyImages();
         loadBulletScoreboardImage();
         loadLiveImage();
         loadCoolingImage();
@@ -161,6 +167,18 @@ public class GamePanel extends JPanel implements Runnable {
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load number images", e);
+        }
+    }
+
+    private void loadKeyImages() {
+        try {
+            keyUpImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/keys/key_up.png")));
+            keyDownImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/keys/key_down.png")));
+            keyRightImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/keys/key_right.png")));
+            keyLeftImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/keys/key_left.png")));
+            keySpaceImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/keys/key_space.png")));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load key images", e);
         }
     }
 
@@ -350,6 +368,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (welcomeScreen){ // Draw the welcome screen
             drawWelcomeScreen(graphics2D);
+            ship.drawWelcomeScreen(graphics2D);
         }
         else if (gameOver){ // Draw the game over screen
             drawGameOverScreen(graphics2D);
@@ -375,13 +394,15 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void drawWelcomeScreen(Graphics2D graphics2D) {
         String word = "spaceships";
-        int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
-        int y = 350;
+        int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2 - 60;
+        int y = (int)(getScreenHeight() * 0.25);
 
         drawFloatingText(graphics2D, "spaceships", letterImages, startX, y, floatTime);
 
         // Draw the "press enter to play" text
         drawCenteredText(graphics2D, "PRESS ENTER TO PLAY", new Font("Courier New", Font.PLAIN, 20));
+
+        drawInstructions(graphics2D);
     }
 
     private void drawPauseScreen(Graphics2D graphics2D) {
@@ -390,18 +411,20 @@ public class GamePanel extends JPanel implements Runnable {
 
         String word = "pause";
         int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
-        int y = (int)(getScreenHeight() * 0.39);
+        int y = (int)(getScreenHeight() * 0.25);
 
         drawFloatingText(graphics2D, "pause", letterImages, startX, y, floatTime);
 
         // Draw the "press P to resume" text
         drawCenteredText(graphics2D, "PRESS P TO RESUME", new Font("Courier New", Font.PLAIN, 20));
+
+        drawInstructions(graphics2D);
     }
 
     private void drawGameOverScreen(Graphics2D graphics2D) {
         String word = "game over";
         int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
-        int y = 350;
+        int y = (int)(getScreenHeight() * 0.25);
 
         drawFloatingText(graphics2D, word, letterImages, startX, y, floatTime);
 
@@ -413,6 +436,14 @@ public class GamePanel extends JPanel implements Runnable {
         int sizeMultiplier = 2; // make the score bigger
         int totalWidth = numberImages.get(0).getWidth() * sizeMultiplier * scoreText.length();
         int x = (getScreenWidth() - totalWidth) / 2; // center the score
+
+        // Draw the "YOUR FINAL SCORE:" text above the score
+        String finalScoreText = "YOUR FINAL SCORE:";
+        graphics2D.setFont(new Font("Courier New", Font.PLAIN, 20));
+        graphics2D.setColor(Color.WHITE);
+        int finalScoreTextX = (getScreenWidth() - graphics2D.getFontMetrics().stringWidth(finalScoreText)) / 2;
+        int finalScoreTextY = (int)(getScreenHeight() * 0.65) - 30; // 30 pixels above the score
+        graphics2D.drawString(finalScoreText, finalScoreTextX, finalScoreTextY);
 
         for (char c : scoreText.toCharArray()) {
             int number = Character.getNumericValue(c);
@@ -527,9 +558,49 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.setFont(font);
         FontMetrics metrics = graphics2D.getFontMetrics(font);
         int x = (getScreenWidth() - metrics.stringWidth(text)) / 2;
-        int y = (int)(getScreenHeight() * 0.75);
+        int y = (int)(getScreenHeight() * 0.85);
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(text, x, y);
+    }
+
+    private void drawInstructions(Graphics2D graphics2D) {
+        int y = 450; // adjust this as needed
+        int padding = 5; // decrease this value to bring the images closer together
+        int x = (getScreenWidth() - (keyUpImage.getWidth() + keyDownImage.getWidth() + keyRightImage.getWidth() + keyLeftImage.getWidth() + padding * 2)) / 4; // center the images
+        int spaceX = ((getScreenWidth() - keySpaceImage.getWidth())/ 4) * 3; // center the space key
+
+        // Draw the up key
+        graphics2D.drawImage(keyUpImage, x + keyUpImage.getWidth() + padding, y, null);
+
+        // Draw the left key
+        graphics2D.drawImage(keyLeftImage, x, y + keyLeftImage.getHeight() + padding, null);
+
+        // Draw the down key
+        graphics2D.drawImage(keyDownImage, x + keyDownImage.getWidth() + padding, y + keyDownImage.getHeight() + padding, null);
+
+        // Draw the right key
+        graphics2D.drawImage(keyRightImage, x + keyRightImage.getWidth() * 2 + padding * 2, y + keyRightImage.getHeight() + padding, null);
+
+        // Draw the space key below the arrow keys
+        graphics2D.drawImage(keySpaceImage, spaceX, y + keySpaceImage.getHeight() + padding, null);
+
+        // Set the font and color for the text
+        graphics2D.setFont(new Font("Courier New", Font.PLAIN, 20));
+        graphics2D.setColor(Color.WHITE);
+
+        // Calculate the position of the "MOVE" text and draw it
+        String moveText = "MOVE";
+        int moveTextWidth = graphics2D.getFontMetrics().stringWidth(moveText);
+        int moveTextX = x + keyDownImage.getWidth() + padding;
+        int moveTextY = y + keyDownImage.getHeight() * 3;
+        graphics2D.drawString(moveText, moveTextX, moveTextY);
+
+        // Calculate the position of the "SHOOT" text and draw it
+        String shootText = "SHOOT";
+        int shootTextWidth = graphics2D.getFontMetrics().stringWidth(shootText);
+        int shootTextX = spaceX + (keySpaceImage.getWidth() - shootTextWidth) / 2;
+        int shootTextY = y + keyDownImage.getHeight() * 3;
+        graphics2D.drawString(shootText, shootTextX, shootTextY);
     }
 
     public Clip playMusic(String filePath) {
