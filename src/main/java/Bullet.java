@@ -80,20 +80,24 @@ public class Bullet extends Entity{
         y -= getSpeed();
 
         // detectObject
-        Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
-        if(entityCollision != null){
-            for(int i = 0; i < gamePanel.getMeteors().size(); i++){
-                if(gamePanel.getMeteors().get(i).equals(entityCollision)){
-                    if(!gamePanel.getMeteors().get(i).getCollision()){
-                        ship.increaseScore(10);
-                    }
+        gamePanel.collisionChecker.detectObjet(this);
+    }
 
-                    gamePanel.getMeteors().get(i).setCollision(true);
-                    this.collision = true;
-                    ship.getExplosionSound().play();
-                }
-            }
+    public void collide(String collideWithType, ArrayList<Obstacle> obstacles, int collideWithIndex){
+        switch (collideWithType){
+            case "meteor_1":
+                ship.increaseScore(10);
+                break;
+
+            case "meteor_2":
+                ship.increaseScore(100);
+                ship.getMeteor2VoiceSound().play();
+                break;
         }
+
+        obstacles.get(collideWithIndex).setCollision(true);
+        this.collision = true;
+        ship.getExplosionSound().play();
     }
 
     /**

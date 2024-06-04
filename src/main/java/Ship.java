@@ -12,7 +12,8 @@ public class Ship extends Entity{
     GamePanel gamePanel;
     KeyHandler keyHandler;
 
-    private final ArrayList<BufferedImage> bufferedImages;
+    private final ArrayList<BufferedImage> normalShipImages;
+    private final ArrayList<BufferedImage> powerupShipImages;
     private BufferedImage damagedShipImage;
     private final Random random;
 
@@ -20,7 +21,7 @@ public class Ship extends Entity{
      * Variables for bullets
      */
     ArrayList<Bullet> bullets = new ArrayList<>();
-    private final int bulletsCapacity;
+    private int bulletsCapacity;
     private int bulletFired;
 
     /**
@@ -36,17 +37,29 @@ public class Ship extends Entity{
 
     private ShootingStrategy shootingStrategy = new SingleBulletStrategy(); // default strategy
 
+    private String collidedWith;
     private int collisionDebounce;
 
-    private final Sound shootSound;
+    private String powerup;
+    private int powerupCounter;
+    private final int superPowerupBulletCapacity;
+    private final int defaultSpeed;
+
+    private final Sound singleShootSound;
+    private final Sound doubleShootSound;
+    private final Sound laserShootSound;
+    private final Sound emptySound;
     private final Sound impactSound;
+    private final Sound powerupSound;
+    private final Sound basicPowerupVoiceSound;
+    private final Sound superPowerupVoiceSound;
     private final Sound explosionSound;
+    private final Sound meteor2VoiceSound;
 
     public Ship(GamePanel gamePanel, KeyHandler keyHandler, int lives, int speed, int bulletsCapacity, int bulletSpeed, int cooldownTime){
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
         this.lives = lives;
-        this.speed = speed;
         this.bulletsCapacity = bulletsCapacity;
         this.bulletSpeed = bulletSpeed;
         this.cooldownTime = cooldownTime;
@@ -57,37 +70,69 @@ public class Ship extends Entity{
         random = new Random();
         collision = false;
         collisionDebounce = 0;
-        bufferedImages = new ArrayList<>();
+        powerupCounter = 0;
+        superPowerupBulletCapacity = 1000;
+        defaultSpeed = speed;
+        normalShipImages = new ArrayList<>();
+        powerupShipImages = new ArrayList<>();
         solidRectangle = new Rectangle(3, 5, 52, 40);
         solidAreaDefaultX = solidRectangle.x;
         solidAreaDefaultY = solidRectangle.y;
-        shootSound = new Sound("res/sounds/laser_2.wav");
+        singleShootSound = new Sound("res/sounds/single_shoot_sound.wav");
+        doubleShootSound = new Sound("res/sounds/double_shoot_sound.wav");
+        laserShootSound = new Sound("res/sounds/laser_shoot_sound.wav");
+        emptySound = new Sound("res/sounds/empty_bullet.wav");
         impactSound = new Sound("res/sounds/impact.wav");
+        powerupSound = new Sound("res/sounds/start_game.wav");
+        superPowerupVoiceSound = new Sound("res/sounds/super_power_up.wav");
+        basicPowerupVoiceSound = new Sound("res/sounds/basic_power_up.wav");
         explosionSound = new Sound("res/sounds/explosion.wav");
+        meteor2VoiceSound = new Sound("res/sounds/meteor_2_voice.wav");
 
         setDefaultValues();
         initializeBullets();
-        setPlayerImage();
+        setShipImages();
     }
 
     private void setDefaultValues(){
         x = gamePanel.getScreenWidth() / 2;
         y = (int) (gamePanel.getScreenHeight() * 0.75);
+        speed = defaultSpeed;
         direction = "up";
+        powerup = "none";
+    }
+
+    private void loseBasicPowerup() {
+        powerup = "none";
+        powerupCounter = 0;
+        setShootingStrategy(new SingleBulletStrategy());
+    }
+
+    private void loseSuperPowerup() {
+        powerup = "none";
+        powerupCounter = 0;
+        speed = defaultSpeed;
+        bulletFired = 0;
+        bulletsCapacity = 100;
+        setShootingStrategy(new SingleBulletStrategy());
     }
 
     private void initializeBullets() {
-        for(int i = 0; i < bulletsCapacity; i++){
+        for(int i = 0; i < superPowerupBulletCapacity; i++){
             bullets.add(new Bullet(gamePanel, keyHandler, this, bulletSpeed));
         }
         bulletFired = 0;
     }
 
-    public ArrayList<BufferedImage> getBufferedImages() {
-        return bufferedImages;
+    public ArrayList<BufferedImage> getNormalShipImages() {
+        return normalShipImages;
     }
 
-    public void setPlayerImage() {
+    public ArrayList<BufferedImage> getPowerupShipImages() {
+        return powerupShipImages;
+    }
+
+    public void setShipImages() {
         try {
             BufferedImage ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip194.png")));
             BufferedImage ship2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip195.png")));
@@ -95,11 +140,23 @@ public class Ship extends Entity{
             BufferedImage ship4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip197.png")));
             BufferedImage ship5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/MainShip198.png")));
 
-            bufferedImages.add(ship1);
-            bufferedImages.add(ship2);
-            bufferedImages.add(ship3);
-            bufferedImages.add(ship4);
-            bufferedImages.add(ship5);
+            normalShipImages.add(ship1);
+            normalShipImages.add(ship2);
+            normalShipImages.add(ship3);
+            normalShipImages.add(ship4);
+            normalShipImages.add(ship5);
+
+            ship1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/powerup_ship/powerup_ship_1.png")));
+            ship2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/powerup_ship/powerup_ship_2.png")));
+            ship3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/powerup_ship/powerup_ship_3.png")));
+            ship4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/powerup_ship/powerup_ship_4.png")));
+            ship5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/powerup_ship/powerup_ship_5.png")));
+
+            powerupShipImages.add(ship1);
+            powerupShipImages.add(ship2);
+            powerupShipImages.add(ship3);
+            powerupShipImages.add(ship4);
+            powerupShipImages.add(ship5);
 
             damagedShipImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/player/damaged_ship.png")));
         }
@@ -112,8 +169,8 @@ public class Ship extends Entity{
     public void update(){
         shootingStrategy.handleShooting(this);
         shootingStrategy.updateBullets(this);
+        checkPowerup();
         handleMovement();
-        changeShootingStrategy();
         updateScore();
 
         if(bulletFired == bulletsCapacity){
@@ -158,17 +215,7 @@ public class Ship extends Entity{
 
         // detectObject
         if (!collision) {
-            Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
-            if (entityCollision != null) {
-                for (int i = 0; i < gamePanel.getMeteors().size(); i++) {
-                    if (gamePanel.getMeteors().get(i).equals(entityCollision)) {
-                        gamePanel.getMeteors().get(i).setCollision(true);
-                        collision = true;
-                        lives--;
-                        impactSound.play();
-                    }
-                }
-            }
+            gamePanel.collisionChecker.detectObjet(this);
         }
 
         if (collision && collisionDebounce <= 10){
@@ -211,21 +258,67 @@ public class Ship extends Entity{
         }
     }
 
+    private void checkPowerup() {
+        if (powerup.equals("basic_power_up") || powerup.equals("super_power_up")) {
+            powerupCounter++;
+            if (powerup.equals("super_power_up") && powerupCounter == 30 * GamePanel.getFps()) {
+                loseSuperPowerup();
+            } else if (powerup.equals("basic_power_up") && powerupCounter == 30 * GamePanel.getFps()) {
+                loseBasicPowerup();
+            }
+        }
+    }
+
     private void setShootingStrategy(ShootingStrategy shootingStrategy) {
         this.shootingStrategy = shootingStrategy;
     }
 
-    private void changeShootingStrategy() {
-        if (keyHandler.getWPressed()) {
-            if (shootingStrategy instanceof SingleBulletStrategy) {
-                setShootingStrategy(new DoubleBulletStrategy());
-            } else if (shootingStrategy instanceof DoubleBulletStrategy) {
-                setShootingStrategy(new LaserBulletStrategy());
-            } else {
-                setShootingStrategy(new SingleBulletStrategy());
-            }
-            keyHandler.setWPressed(false);
+    public void collide(String collideWithType, ArrayList<Obstacle> obstacles, int collideWithIndex){
+        collidedWith = collideWithType;
+
+        switch (collideWithType){
+            case "meteor_1":
+                lives--;
+                impactSound.play();
+                break;
+
+            case "meteor_2":
+                lives -= 2;
+                impactSound.play();
+                break;
+
+            case "bullet_power_up":
+                bulletFired = 0;
+                powerupSound.play();
+                break;
+
+            case "basic_power_up":
+                if (powerup.equals("none")){
+                    powerup = "basic_power_up";
+                    bulletsCapacity = bulletsCapacity * 2;
+                    bulletFired = 0;
+                    setShootingStrategy(new DoubleBulletStrategy());
+                    powerupSound.play();
+                    basicPowerupVoiceSound.play();
+                }
+                break;
+
+            case "super_power_up":
+                if (powerup.equals("none") || powerup.equals("basic_power_up")){
+                    powerup = "super_power_up";
+                    lives = 7;
+                    speed += 3;
+                    bulletsCapacity = superPowerupBulletCapacity;
+                    bulletFired = 0;
+                    setShootingStrategy(new LaserBulletStrategy());
+                    powerupSound.play();
+                    superPowerupVoiceSound.play();
+                }
+                break;
         }
+
+        obstacles.get(collideWithIndex).setCollision(true);
+        this.collision = true;
     }
 
     @Override
@@ -235,17 +328,19 @@ public class Ship extends Entity{
     }
 
     private void drawBullets(Graphics2D graphics2D) {
-        for (Bullet bullet: bullets){
-            bullet.draw(graphics2D);
+        for (int i = 0; i < bulletsCapacity; i++){
+            bullets.get(i).draw(graphics2D);
         }
     }
 
     private void drawPlayer(Graphics2D graphics2D) {
-        if (collision && collisionDebounce <= 10){
+        if (collision && collisionDebounce <= 10 && (collidedWith.equals("meteor_1") || collidedWith.equals("meteor_2"))){
             graphics2D.drawImage(damagedShipImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-        }
-        else {
-            BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
+        } else if (powerup.equals("super_power_up")) {
+            BufferedImage bufferedImage = powerupShipImages.get(random.nextInt(getPowerupShipImages().size()));
+            graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+        } else {
+            BufferedImage bufferedImage = normalShipImages.get(random.nextInt(getNormalShipImages().size()));
             graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
         }
         //graphics2D.setColor(Color.RED);
@@ -256,7 +351,7 @@ public class Ship extends Entity{
         int x = gamePanel.getScreenWidth() / 2 + 150;
         int y = (int)(gamePanel.getScreenHeight() * 0.24);
 
-        BufferedImage bufferedImage = bufferedImages.get(random.nextInt(getBufferedImages().size()));
+        BufferedImage bufferedImage = normalShipImages.get(random.nextInt(getNormalShipImages().size()));
         graphics2D.drawImage(bufferedImage, x, y, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
     }
 
@@ -322,12 +417,28 @@ public class Ship extends Entity{
         return cooldownCounter;
     }
 
-    public Sound getShootSound() {
-        return shootSound;
+    public Sound getSingleShootSound() {
+        return singleShootSound;
+    }
+
+    public Sound getDoubleShootSound() {
+        return doubleShootSound;
+    }
+
+    public Sound getLaserShootSound() {
+        return laserShootSound;
+    }
+
+    public Sound getEmptySound() {
+        return emptySound;
     }
 
     public Sound getExplosionSound() {
         return explosionSound;
+    }
+
+    public Sound getMeteor2VoiceSound(){
+        return meteor2VoiceSound;
     }
 
     public void increaseBulletFired(int bulletFired) {

@@ -7,28 +7,101 @@ public class CollisionChecker {
         this.gamePanel = gamePanel;
     }
 
-    public Entity detectObjet(Entity entity){
-        Entity entityTemp = null;
-
-        try{
-            for(Meteor meteor: gamePanel.meteors){
-                if(checkIntersect(entity, meteor)){
-                    entityTemp = meteor;
-                    break;
-                }
-            }
-
-            if(entityTemp == null){
-                // Checkeo si impacto contra otro objeto.
-            }
+    public void detectObjet(Entity entity){
+        if(checkCollisionWithMeteor1(entity)){
+            return;
+        } else if(checkCollisionWithMeteor2(entity)){
+            return;
+        } else if (checkCollisionWithBulletPowerup(entity)) {
+            return;
+        } else if (checkCollisionWithBasicPowerup(entity)) {
+            return;
+        }else if (checkCollisionWithSuperPowerup(entity)) {
+            return;
         }
-        catch (NullPointerException e){
-            System.out.println("No collision detected");
-        }
-        return entityTemp;
     }
 
-    public boolean checkIntersect(Entity entity1, Entity entity2){
+    private boolean checkCollisionWithMeteor1(Entity entity){
+        for(Obstacle meteor_1 : gamePanel.getMeteors1()){
+            if(checkIntersect(entity, meteor_1)){
+                if (entity instanceof Bullet){
+                    ((Bullet) entity).collide(meteor_1.getObstacleType(), gamePanel.getMeteors1(), gamePanel.getMeteors1().indexOf(meteor_1));
+                    return true;
+                } else if (entity instanceof Ship) {
+                    ((Ship) entity).collide(meteor_1.getObstacleType(), gamePanel.getMeteors1(), gamePanel.getMeteors1().indexOf(meteor_1));
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkCollisionWithMeteor2(Entity entity){
+        for(Obstacle meteor_2 : gamePanel.getMeteors2()){
+            if(checkIntersect(entity, meteor_2)){
+                if (entity instanceof Bullet){
+                    ((Bullet) entity).collide(meteor_2.getObstacleType(), gamePanel.getMeteors2(), gamePanel.getMeteors2().indexOf(meteor_2));
+                    return true;
+                } else if (entity instanceof Ship) {
+                    ((Ship) entity).collide(meteor_2.getObstacleType(), gamePanel.getMeteors2(), gamePanel.getMeteors2().indexOf(meteor_2));
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkCollisionWithBulletPowerup(Entity entity){
+        for(Obstacle bulletPowerUp : gamePanel.getBulletPowerUps()){
+            if(checkIntersect(entity, bulletPowerUp)){
+                if (entity instanceof Bullet){
+                    ((Bullet) entity).collide(bulletPowerUp.getObstacleType(), gamePanel.getBulletPowerUps(), gamePanel.getBulletPowerUps().indexOf(bulletPowerUp));
+                    return true;
+                } else if (entity instanceof Ship) {
+                    ((Ship) entity).collide(bulletPowerUp.getObstacleType(), gamePanel.getBulletPowerUps(), gamePanel.getBulletPowerUps().indexOf(bulletPowerUp));
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkCollisionWithBasicPowerup(Entity entity){
+        for(Obstacle basicPowerUp : gamePanel.getBasicPowerUps()){
+            if(checkIntersect(entity, basicPowerUp)){
+                if (entity instanceof Bullet){
+                    ((Bullet) entity).collide(basicPowerUp.getObstacleType(), gamePanel.getBasicPowerUps(), gamePanel.getBasicPowerUps().indexOf(basicPowerUp));
+                    return true;
+                } else if (entity instanceof Ship) {
+                    ((Ship) entity).collide(basicPowerUp.getObstacleType(), gamePanel.getBasicPowerUps(), gamePanel.getBasicPowerUps().indexOf(basicPowerUp));
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkCollisionWithSuperPowerup(Entity entity){
+        for(Obstacle superPowerUp : gamePanel.getSuperPowerUps()){
+            if(checkIntersect(entity, superPowerUp)){
+                if (entity instanceof Bullet){
+                    ((Bullet) entity).collide(superPowerUp.getObstacleType(), gamePanel.getSuperPowerUps(), gamePanel.getSuperPowerUps().indexOf(superPowerUp));
+                    return true;
+                } else if (entity instanceof Ship) {
+                    ((Ship) entity).collide(superPowerUp.getObstacleType(), gamePanel.getSuperPowerUps(), gamePanel.getSuperPowerUps().indexOf(superPowerUp));
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkIntersect(Entity entity1, Entity entity2){
         boolean crashed = false;
 
         if(entity2 != null){

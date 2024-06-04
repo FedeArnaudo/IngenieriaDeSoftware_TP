@@ -36,7 +36,8 @@ public class GamePanel extends JPanel implements Runnable {
     /**
      * Game Settings
      */
-    private static final int METEORS_NUMBER = 9;
+    private static final int METEORS_1_NUMBER = 20;
+    private static final int METEORS_2_NUMBER = 3;
     private static final int METEORS_SPEED_THRESHOLD = 8;
     private static final int SHIPS_LIVES = 7;
     private static final int SHIPS_SPEED = 6;
@@ -57,7 +58,8 @@ public class GamePanel extends JPanel implements Runnable {
     /**
      * This object represents the meteors that travel vertically across the map.
      */
-    ArrayList<Meteor> meteors = new ArrayList<>();
+    ArrayList<Obstacle> meteors_1 = new ArrayList<>();
+    ArrayList<Obstacle> meteors_2 = new ArrayList<>();
 
     /**
      * This object is used to manage the tiles that are drawn on the screen.
@@ -80,7 +82,9 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean welcomeScreen = true;
     private final Map<Character, BufferedImage> letterImages = new HashMap<>();
     private double floatTime = 0;
+    private Sound welcomeScreenVoiceSound;
     private Sound startGameSound;
+    private Sound startGameVoiceSound;
     BufferedImage keyUpImage;
     BufferedImage keyDownImage;
     BufferedImage keyRightImage;
@@ -98,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean gameOver = false;
     private int gameOverCounter = 0;
     private Sound gameOverSound;
+    private Sound gameOverVoiceSound;
 
     /**
      * Array for scoreboard numbers
@@ -128,7 +133,11 @@ public class GamePanel extends JPanel implements Runnable {
      */
     private final Random randomMeteorSpeed;
 
-    public GamePanel(){
+    private final ArrayList<Obstacle> bulletPowerUps = new ArrayList<>();
+    private final ArrayList<Obstacle> basicPowerUps = new ArrayList<>();
+    private final ArrayList<Obstacle> superPowerUps = new ArrayList<>();
+
+    public GamePanel() {
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
@@ -145,7 +154,7 @@ public class GamePanel extends JPanel implements Runnable {
         loadLiveImage();
         loadCoolingImage();
         loadGamePanelSounds();
-        initializeMeteors();
+        initializeObstacles();
     }
 
     private void loadLetterImages() {
@@ -207,17 +216,36 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void loadGamePanelSounds() {
+        welcomeScreenVoiceSound = new Sound("res/sounds/welcome_to_spaceships.wav");
         startGameSound = new Sound("res/sounds/start_game.wav");
+        startGameVoiceSound = new Sound("res/sounds/start_game_voice.wav");
         gameOverSound = new Sound("res/sounds/game_over.wav");
+        gameOverVoiceSound = new Sound("res/sounds/game_over_voice.wav");
     }
 
-    private void initializeMeteors() {
-        for(int i = 0; i < METEORS_NUMBER; i++){
-            meteors.add(new Meteor(this, randomMeteorSpeed.nextInt(METEORS_SPEED_THRESHOLD) + 2));
+    private void initializeObstacles() {
+        for (int i = 0; i < METEORS_1_NUMBER; i++) {
+            meteors_1.add(new Obstacle(this, "meteor_1", randomMeteorSpeed.nextInt(METEORS_SPEED_THRESHOLD) + 2));
+        }
+
+        for (int i = 0; i < METEORS_2_NUMBER; i++) {
+            meteors_2.add(new Obstacle(this, "meteor_2", randomMeteorSpeed.nextInt(6) + 2));
+        }
+
+        for (int i = 0; i < 2; i++) {
+            bulletPowerUps.add(new Obstacle(this, "bullet_power_up", randomMeteorSpeed.nextInt(4) + 2));
+        }
+
+        for (int i = 0; i < 2; i++) {
+            basicPowerUps.add(new Obstacle(this, "basic_power_up", randomMeteorSpeed.nextInt(4) + 2));
+        }
+
+        for (int i = 0; i < 1; i++) {
+            superPowerUps.add(new Obstacle(this, "super_power_up", randomMeteorSpeed.nextInt(2) + 2));
         }
     }
 
-    public void startGameThread(){
+    public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -225,6 +253,7 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
         Clip backgroundMusic = playMusic("res/music/welcome_screen_background.wav");
+        welcomeScreenVoiceSound.play();
         Clip pauseMusic = null;
 
         double drawInterval = calculateDrawInterval();
@@ -255,8 +284,9 @@ public class GamePanel extends JPanel implements Runnable {
 
             if (!isPaused) { // Check if the game is not paused
                 if (gameOver) { // Game over screen
-                    if (gameOverCounter == 0){
+                    if (gameOverCounter == 0) {
                         gameOverSound.play();
+                        gameOverVoiceSound.play();
                         backgroundMusic = playNewMusic(backgroundMusic, "res/music/game_over_background.wav");
                     }
 
@@ -267,22 +297,17 @@ public class GamePanel extends JPanel implements Runnable {
                     welcomeScreen = false;
 
                     startGameSound.play();
+                    startGameVoiceSound.play();
                     backgroundMusic = playNewMusic(backgroundMusic, "res/music/background.wav");
 
                     keyHandler.setEnterPressed(false);
                 }
 
                 if (keyHandler.getEnterPressed() && gameOver) { // Pressed enter key on game over screen -> restart the game
-                    gameOver = false;
-                    gameOverCounter = 0;
-
-                    ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_SPEED, SHIPS_BULLETS_CAPACITY, SHIPS_BULLET_SPEED, SHIP_COOLDOWN_TIME);
-
-                    for (Meteor meteor: meteors){
-                        meteor.setDefaultValues();
-                    }
+                    restartGame();
 
                     startGameSound.play();
+                    startGameVoiceSound.play();
                     backgroundMusic = playNewMusic(backgroundMusic, "res/music/background.wav");
 
                     keyHandler.setEnterPressed(false);
@@ -301,13 +326,40 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    private void restartGame() {
+        gameOver = false;
+        gameOverCounter = 0;
+
+        ship = new Ship(this, keyHandler, SHIPS_LIVES, SHIPS_SPEED, SHIPS_BULLETS_CAPACITY, SHIPS_BULLET_SPEED, SHIP_COOLDOWN_TIME);
+
+        for (Obstacle obstacle : meteors_1) {
+            obstacle.setDefaultValues();
+        }
+
+        for (Obstacle obstacle : meteors_2) {
+            obstacle.setDefaultValues();
+        }
+
+        for (Obstacle obstacle : bulletPowerUps) {
+            obstacle.setDefaultValues();
+        }
+
+        for (Obstacle obstacle : basicPowerUps) {
+            obstacle.setDefaultValues();
+        }
+
+        for (Obstacle obstacle : superPowerUps) {
+            obstacle.setDefaultValues();
+        }
+    }
+
     private double calculateDrawInterval() {
-        return (double) 1000000000 /FPS;   //1ps/FPS   1ps/60 = 16.6666666667ms
+        return (double) 1000000000 / FPS;   //1ps/FPS   1ps/60 = 16.6666666667ms
     }
 
     private void updateGame() {
         updatePlayer();
-        updateMeteors();
+        updateObstacles();
     }
 
     private void updatePlayer() {
@@ -323,18 +375,34 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    private void updateMeteors() {
-        for (Meteor meteor: meteors){
-            meteor.update();
+    private void updateObstacles() {
+        for (Obstacle meteor_1 : meteors_1) {
+            meteor_1.update();
+        }
+
+        for (Obstacle meteor_2 : meteors_2) {
+            meteor_2.update();
+        }
+
+        for (Obstacle bulletPowerUp : bulletPowerUps) {
+            bulletPowerUp.update();
+        }
+
+        for (Obstacle basicPowerUp : basicPowerUps) {
+            basicPowerUp.update();
+        }
+
+        for (Obstacle superPowerUp : superPowerUps) {
+            superPowerUp.update();
         }
     }
 
     private double sleepAndCalculateNextDrawTime(double drawInterval, double nextDrawTime) {
         try {
             double remainingTime = nextDrawTime - System.nanoTime();
-            remainingTime = remainingTime/1000000;
+            remainingTime = remainingTime / 1000000;
 
-            if(remainingTime < 0){
+            if (remainingTime < 0) {
                 remainingTime = 0;
             }
 
@@ -366,19 +434,15 @@ public class GamePanel extends JPanel implements Runnable {
             throw new RuntimeException("Failed to draw game elements", e);
         }
 
-        if (welcomeScreen){ // Draw the welcome screen
+        if (welcomeScreen) { // Draw the welcome screen
             drawWelcomeScreen(graphics2D);
             ship.drawWelcomeScreen(graphics2D);
-        }
-        else if (gameOver){ // Draw the game over screen
+        } else if (gameOver) { // Draw the game over screen
             drawGameOverScreen(graphics2D);
-        }
-        else { // Draw the game
+        } else { // Draw the game
             ship.draw(graphics2D);
 
-            for(Meteor meteor: meteors){
-                meteor.draw(graphics2D);
-            }
+            drawObstacles(graphics2D);
 
             drawScore(graphics2D);
 
@@ -392,10 +456,32 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    private void drawObstacles(Graphics2D graphics2D) {
+        for (Obstacle meteor_1 : meteors_1) {
+            meteor_1.draw(graphics2D);
+        }
+
+        for (Obstacle meteor_2 : meteors_2) {
+            meteor_2.draw(graphics2D);
+        }
+
+        for (Obstacle bulletPowerUp : bulletPowerUps) {
+            bulletPowerUp.draw(graphics2D);
+        }
+
+        for (Obstacle basicPowerUp : basicPowerUps) {
+            basicPowerUp.draw(graphics2D);
+        }
+
+        for (Obstacle superPowerUp : superPowerUps) {
+            superPowerUp.draw(graphics2D);
+        }
+    }
+
     private void drawWelcomeScreen(Graphics2D graphics2D) {
         String word = "spaceships";
         int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2 - 60;
-        int y = (int)(getScreenHeight() * 0.25);
+        int y = (int) (getScreenHeight() * 0.25);
 
         drawFloatingText(graphics2D, "spaceships", letterImages, startX, y, floatTime);
 
@@ -411,7 +497,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         String word = "pause";
         int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
-        int y = (int)(getScreenHeight() * 0.25);
+        int y = (int) (getScreenHeight() * 0.25);
 
         drawFloatingText(graphics2D, "pause", letterImages, startX, y, floatTime);
 
@@ -424,7 +510,7 @@ public class GamePanel extends JPanel implements Runnable {
     private void drawGameOverScreen(Graphics2D graphics2D) {
         String word = "game over";
         int startX = (getScreenWidth() - word.length() * letterImages.get('a').getWidth() * 2) / 2;
-        int y = (int)(getScreenHeight() * 0.25);
+        int y = (int) (getScreenHeight() * 0.25);
 
         drawFloatingText(graphics2D, word, letterImages, startX, y, floatTime);
 
@@ -442,13 +528,13 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.setFont(new Font("Courier New", Font.PLAIN, 20));
         graphics2D.setColor(Color.WHITE);
         int finalScoreTextX = (getScreenWidth() - graphics2D.getFontMetrics().stringWidth(finalScoreText)) / 2;
-        int finalScoreTextY = (int)(getScreenHeight() * 0.65) - 30; // 30 pixels above the score
+        int finalScoreTextY = (int) (getScreenHeight() * 0.65) - 30; // 30 pixels above the score
         graphics2D.drawString(finalScoreText, finalScoreTextX, finalScoreTextY);
 
         for (char c : scoreText.toCharArray()) {
             int number = Character.getNumericValue(c);
             BufferedImage numberImage = numberImages.get(number);
-            graphics2D.drawImage(numberImage, x, (int)(getScreenHeight() * 0.65), numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
+            graphics2D.drawImage(numberImage, x, (int) (getScreenHeight() * 0.65), numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
             x += numberImage.getWidth() * sizeMultiplier;
         }
     }
@@ -462,7 +548,7 @@ public class GamePanel extends JPanel implements Runnable {
         for (char c : scoreString.toCharArray()) {
             int number = Character.getNumericValue(c);
             BufferedImage numberImage = numberImages.get(number);
-            graphics2D.drawImage(numberImage, x, padding, (int)(numberImage.getWidth() * sizeMultiplier * scoreZoom), (int)(numberImage.getHeight() * sizeMultiplier * scoreZoom), null);
+            graphics2D.drawImage(numberImage, x, padding, (int) (numberImage.getWidth() * sizeMultiplier * scoreZoom), (int) (numberImage.getHeight() * sizeMultiplier * scoreZoom), null);
             x += numberImage.getWidth() * sizeMultiplier;
         }
 
@@ -548,7 +634,7 @@ public class GamePanel extends JPanel implements Runnable {
             char ch = text.charAt(i);
             BufferedImage img = letterImages.get(ch);
             if (img != null) {
-                int floatOffset = (int)(Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
+                int floatOffset = (int) (Math.sin(floatTime + i) * 5); // Calculate a floatOffset for each letter
                 graphics2D.drawImage(img, startX + i * img.getWidth() * 2, y + floatOffset, img.getWidth() * 2, img.getHeight() * 2, null); // Add the floatOffset to the y-position
             }
         }
@@ -558,7 +644,7 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.setFont(font);
         FontMetrics metrics = graphics2D.getFontMetrics(font);
         int x = (getScreenWidth() - metrics.stringWidth(text)) / 2;
-        int y = (int)(getScreenHeight() * 0.85);
+        int y = (int) (getScreenHeight() * 0.85);
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(text, x, y);
     }
@@ -567,7 +653,7 @@ public class GamePanel extends JPanel implements Runnable {
         int y = 450; // adjust this as needed
         int padding = 5; // decrease this value to bring the images closer together
         int x = (getScreenWidth() - (keyUpImage.getWidth() + keyDownImage.getWidth() + keyRightImage.getWidth() + keyLeftImage.getWidth() + padding * 2)) / 4; // center the images
-        int spaceX = ((getScreenWidth() - keySpaceImage.getWidth())/ 4) * 3; // center the space key
+        int spaceX = ((getScreenWidth() - keySpaceImage.getWidth()) / 4) * 3; // center the space key
 
         // Draw the up key
         graphics2D.drawImage(keyUpImage, x + keyUpImage.getWidth() + padding, y, null);
@@ -641,7 +727,24 @@ public class GamePanel extends JPanel implements Runnable {
         return SCREEN_HEIGHT;
     }
 
-    public ArrayList<Meteor> getMeteors() {
-        return meteors;
+    public ArrayList<Obstacle> getMeteors1() {
+        return meteors_1;
     }
+
+    public ArrayList<Obstacle> getMeteors2() {
+        return meteors_2;
+    }
+
+    public ArrayList<Obstacle> getBulletPowerUps() {
+        return bulletPowerUps;
+    }
+
+    public ArrayList<Obstacle> getBasicPowerUps() {
+        return basicPowerUps;
+    }
+
+    public ArrayList<Obstacle> getSuperPowerUps() {
+        return superPowerUps;
+    }
+
 }

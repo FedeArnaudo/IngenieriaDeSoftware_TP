@@ -5,14 +5,19 @@ public class SingleBulletStrategy implements ShootingStrategy {
     public void shoot(Ship ship) {
         ship.increaseBulletFired(1);
         ship.bullets.get(ship.getBulletFired()-1).setShootFlag(true);
-        ship.getShootSound().play();
+        ship.getSingleShootSound().play();
     }
 
     @Override
     public void handleShooting(Ship ship) {
-        if (ship.keyHandler.getSpacePressed() && ship.getBulletFired() < ship.getBulletsCapacity() && ship.keyHandler.isBulletNotFiredInCurrentKeyPress()) {
-            shoot(ship);
-            ship.keyHandler.setBulletFiredInCurrentKeyPress(true); // set the flag to true after a bullet is fired
+        if (ship.keyHandler.getSpacePressed()) {
+            if (ship.getBulletFired() < ship.getBulletsCapacity() && ship.keyHandler.isBulletNotFiredInCurrentKeyPress()) {
+                shoot(ship);
+                ship.keyHandler.setBulletFiredInCurrentKeyPress(true); // set the flag to true after a bullet is fired
+            } else if (!(ship.getBulletFired() < ship.getBulletsCapacity()) && ship.keyHandler.isBulletNotFiredInCurrentKeyPress()){
+                ship.getEmptySound().play();
+                ship.keyHandler.setBulletFiredInCurrentKeyPress(true);
+            }
         }
     }
 
