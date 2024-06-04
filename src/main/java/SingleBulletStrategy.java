@@ -3,11 +3,9 @@ package main.java;
 public class SingleBulletStrategy implements ShootingStrategy {
     @Override
     public void shoot(Ship ship) {
-        if (ship.getBulletFired() < ship.getBulletsCapacity()) {
-            ship.increaseBulletFired(1);
-            ship.bullets.get(ship.getBulletFired()-1).setShootFlag(true);
-            ship.getShootSound().play();
-        }
+        ship.increaseBulletFired(1);
+        ship.bullets.get(ship.getBulletFired()-1).setShootFlag(true);
+        ship.getShootSound().play();
     }
 
     @Override

@@ -80,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean welcomeScreen = true;
     private final Map<Character, BufferedImage> letterImages = new HashMap<>();
     private double floatTime = 0;
+    private Sound startGameSound;
 
     /**
      * Variables for pause screen
@@ -91,7 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     private boolean gameOver = false;
     private int gameOverCounter = 0;
-    private final Sound gameOverSound;
+    private Sound gameOverSound;
 
     /**
      * Array for scoreboard numbers
@@ -117,6 +118,9 @@ public class GamePanel extends JPanel implements Runnable {
     private int dotCounter;
     private BufferedImage collingIconImage;
 
+    /**
+     * Variables for meteors
+     */
     private final Random randomMeteorSpeed;
 
     public GamePanel(){
@@ -126,7 +130,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
 
-        gameOverSound = new Sound("res/sounds/game_over.wav");
         randomMeteorSpeed = new Random();
         dotCounter = 1;
 
@@ -135,6 +138,7 @@ public class GamePanel extends JPanel implements Runnable {
         loadBulletScoreboardImage();
         loadLiveImage();
         loadCoolingImage();
+        loadGamePanelSounds();
         initializeMeteors();
     }
 
@@ -184,6 +188,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    private void loadGamePanelSounds() {
+        startGameSound = new Sound("res/sounds/start_game.wav");
+        gameOverSound = new Sound("res/sounds/game_over.wav");
+    }
+
     private void initializeMeteors() {
         for(int i = 0; i < METEORS_NUMBER; i++){
             meteors.add(new Meteor(this, randomMeteorSpeed.nextInt(METEORS_SPEED_THRESHOLD) + 2));
@@ -198,42 +207,54 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
         Clip backgroundMusic = playMusic("res/music/welcome_screen_background.wav");
+        Clip pauseMusic = null;
 
         double drawInterval = calculateDrawInterval();
         double nextDrawTime = System.nanoTime() + drawInterval;
 
         while (gameThread != null) {
-            if (!welcomeScreen && !gameOver) {
+            if (!welcomeScreen && !gameOver) { // Check if the game is paused
+
                 if (keyHandler.getPPressed() && !isPaused) {
                     isPaused = true;
+
+                    backgroundMusic.stop();
+                    pauseMusic = playMusic("res/music/pause_background.wav");
+
                     keyHandler.setPPressed(false);
                 } else if (keyHandler.getPPressed() && isPaused) {
                     isPaused = false;
+
+                    if (pauseMusic != null) {
+                        pauseMusic.stop();
+                    }
+
+                    backgroundMusic.start();
+
                     keyHandler.setPPressed(false);
                 }
             }
 
-            if (!isPaused) {
-                if (gameOver) {
+            if (!isPaused) { // Check if the game is not paused
+                if (gameOver) { // Game over screen
                     if (gameOverCounter == 0){
-                        backgroundMusic.stop();
-                        backgroundMusic = playMusic("res/music/game_over_background.wav");
                         gameOverSound.play();
+                        backgroundMusic = playNewMusic(backgroundMusic, "res/music/game_over_background.wav");
                     }
 
                     gameOverCounter++;
                 }
 
-                if (keyHandler.getEnterPressed() && welcomeScreen) {
+                if (keyHandler.getEnterPressed() && welcomeScreen) { // Pressed enter key on welcome screen -> start the game
                     welcomeScreen = false;
 
-                    backgroundMusic.stop();
-                    backgroundMusic = playMusic("res/music/background.wav");
+                    startGameSound.play();
+                    backgroundMusic = playNewMusic(backgroundMusic, "res/music/background.wav");
 
                     keyHandler.setEnterPressed(false);
                 }
 
-                if (keyHandler.getEnterPressed() && gameOver) {
+                if (keyHandler.getEnterPressed() && gameOver) { // Pressed enter key on game over screen -> restart the game
                     gameOver = false;
                     gameOverCounter = 0;
 
@@ -243,13 +264,13 @@ public class GamePanel extends JPanel implements Runnable {
                         meteor.setDefaultValues();
                     }
 
-                    backgroundMusic.stop();
-                    backgroundMusic = playMusic("res/music/background.wav");
+                    startGameSound.play();
+                    backgroundMusic = playNewMusic(backgroundMusic, "res/music/background.wav");
 
                     keyHandler.setEnterPressed(false);
                 }
 
-                if (!welcomeScreen && !gameOver) {
+                if (!welcomeScreen && !gameOver) { // Update the game if it is not paused
                     updateGame();
                 }
             }
@@ -269,6 +290,10 @@ public class GamePanel extends JPanel implements Runnable {
     private void updateGame() {
         updatePlayer();
         updateMeteors();
+    }
+
+    private void updatePlayer() {
+        ship.update();
 
         if (ship.getLives() <= 0) {
             gameOver = true;
@@ -278,10 +303,6 @@ public class GamePanel extends JPanel implements Runnable {
             scoreZoom = 1.5;
             lastScore = ship.getScore() / 100;
         }
-    }
-
-    private void updatePlayer() {
-        ship.update();
     }
 
     private void updateMeteors() {
@@ -327,13 +348,13 @@ public class GamePanel extends JPanel implements Runnable {
             throw new RuntimeException("Failed to draw game elements", e);
         }
 
-        if (welcomeScreen){
+        if (welcomeScreen){ // Draw the welcome screen
             drawWelcomeScreen(graphics2D);
         }
-        else if (gameOver){
+        else if (gameOver){ // Draw the game over screen
             drawGameOverScreen(graphics2D);
         }
-        else {
+        else { // Draw the game
             ship.draw(graphics2D);
 
             for(Meteor meteor: meteors){
@@ -396,7 +417,7 @@ public class GamePanel extends JPanel implements Runnable {
         for (char c : scoreText.toCharArray()) {
             int number = Character.getNumericValue(c);
             BufferedImage numberImage = numberImages.get(number);
-            graphics2D.drawImage(numberImage, x, (int)(getScreenHeight() * 0.65), (int)(numberImage.getWidth() * sizeMultiplier), (int)(numberImage.getHeight() * sizeMultiplier), null);
+            graphics2D.drawImage(numberImage, x, (int)(getScreenHeight() * 0.65), numberImage.getWidth() * sizeMultiplier, numberImage.getHeight() * sizeMultiplier, null);
             x += numberImage.getWidth() * sizeMultiplier;
         }
     }
@@ -522,6 +543,11 @@ public class GamePanel extends JPanel implements Runnable {
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             throw new RuntimeException("Could not play music", e);
         }
+    }
+
+    private Clip playNewMusic(Clip backgroundMusic, String musicPath) {
+        backgroundMusic.stop();
+        return playMusic(musicPath);
     }
 
     public static int getOriginalTileSize() {
