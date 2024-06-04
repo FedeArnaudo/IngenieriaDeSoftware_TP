@@ -71,8 +71,8 @@ public class Ship extends Entity{
     }
 
     private void setDefaultValues(){
-        x = 400;
-        y = 850;
+        x = gamePanel.getScreenWidth() / 2;
+        y = (int) (gamePanel.getScreenHeight() * 0.75);
         direction = "up";
     }
 
@@ -142,7 +142,19 @@ public class Ship extends Entity{
             }
         }
 
-        else { direction = "up";}
+        if (keyHandler.getUpPressed()) {
+            direction = "up";
+            if (getY() > 0) {
+                moveUp();
+            }
+        }
+
+        if (keyHandler.getDownPressed()) {
+            direction = "down";
+            if (getY() < (gamePanel.getScreenHeight() - gamePanel.getTileSize())) {
+                moveDown();
+            }
+        }
 
         // detectObject
         if (!collision) {
@@ -174,6 +186,14 @@ public class Ship extends Entity{
 
     private void moveRight() {
         x += getSpeed();
+    }
+
+    private void moveUp() {
+        y -= getSpeed();
+    }
+
+    private void moveDown() {
+        y += getSpeed();
     }
 
     private void updateScore() {

@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    private boolean leftPressed, rightPressed, spacePressed, enterPressed, pPressed, wPressed, bulletFiredInCurrentKeyPress;
+    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed, enterPressed, pPressed, wPressed, bulletFiredInCurrentKeyPress;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -19,6 +19,12 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_RIGHT){
             rightPressed = true;
+        }
+        if (code == KeyEvent.VK_UP) {
+            upPressed = true;
+        }
+        if (code == KeyEvent.VK_DOWN) {
+            downPressed = true;
         }
         if(code == KeyEvent.VK_SPACE){
             spacePressed = true;
@@ -44,6 +50,12 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_RIGHT){
             rightPressed = false;
         }
+        if (code == KeyEvent.VK_UP) {
+            upPressed = false;
+        }
+        if (code == KeyEvent.VK_DOWN) {
+            downPressed = false;
+        }
         if(code == KeyEvent.VK_SPACE){
             spacePressed = false;
             bulletFiredInCurrentKeyPress = false;
@@ -65,6 +77,14 @@ public class KeyHandler implements KeyListener {
 
     public boolean  getRightPressed() {
         return rightPressed;
+    }
+
+    public boolean  getUpPressed() {
+        return upPressed;
+    }
+
+    public boolean  getDownPressed() {
+        return downPressed;
     }
 
     public boolean  getSpacePressed() {
