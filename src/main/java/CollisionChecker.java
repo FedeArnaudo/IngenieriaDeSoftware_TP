@@ -7,11 +7,11 @@ public class CollisionChecker {
         this.gamePanel = gamePanel;
     }
 
-    public Entity detectObjet(Entity entity){
+    public Entity detectObject(Entity entity){
         Entity entityTemp = null;
 
         try{
-            for(Meteor meteor: gamePanel.meteors){
+            for(Meteor meteor: gamePanel.getMeteors()){
                 if(checkIntersect(entity, meteor)){
                     entityTemp = meteor;
                     break;

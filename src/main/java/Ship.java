@@ -137,7 +137,7 @@ public class Ship extends Entity{
 
         // detectObject
         if (!collision) {
-            Entity entityCollision = gamePanel.collisionChecker.detectObjet(this);
+            Entity entityCollision = gamePanel.collisionChecker.detectObject(this);
             if (entityCollision != null) {
                 for (int i = 0; i < gamePanel.getMeteors().size(); i++) {
                     if (gamePanel.getMeteors().get(i).equals(entityCollision)) {
