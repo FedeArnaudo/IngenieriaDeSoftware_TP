@@ -5,7 +5,7 @@ public class Main {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setTitle("My Game SpaceShips");
+        window.setTitle("SpaceShips");
 
         GamePanelImageManager imageManager = new GamePanelImageManager();
         GamePanelSoundManager soundManager = new GamePanelSoundManager();
