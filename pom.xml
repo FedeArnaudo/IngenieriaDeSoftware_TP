@@ -34,7 +34,7 @@
                 </dependencies>
                 <configuration>
                     <excludes>
-                        <exclude>com.driver.test.GamePanelSoundManagerTest</exclude>
+                        <exclude>**/GamePanelSoundManagerTest</exclude>
                     </excludes>
                 </configuration>
             </plugin>
