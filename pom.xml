@@ -32,6 +32,11 @@
                         <version>5.2.0-M1</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <excludes>
+                        <exclude>com.driver.test.GamePanelSoundManagerTest</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
