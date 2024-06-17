@@ -1,5 +1,3 @@
-package main.java;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
@@ -7,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class TileManager {
-    GamePanel gamePanel;
+    private final GamePanel gamePanel;
     private final ArrayList<Tile> tiles;
     private int countDraw;
     private final int IMAGES_NUMB = 66;
@@ -24,7 +22,7 @@ public class TileManager {
         try {
             for(int i = 0; i < IMAGES_NUMB; i ++){
                 Tile tile = new Tile();
-                tile.image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/space3/fila-" + (i+1) + "-columna-1.png")));
+                tile.setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("space3/fila-" + (i+1) + "-columna-1.png"))));
                 tiles.add(tile);
             }
         }
@@ -35,7 +33,7 @@ public class TileManager {
 
     public void draw(Graphics2D graphics2D) throws InterruptedException {
         for(int i = 0; i < IMAGES_NUMB; i ++){
-            graphics2D.drawImage(tiles.get(i).image, 0, (GamePanel.getOriginalTileSize() * i), gamePanel.getScreenWidth(), GamePanel.getOriginalTileSize(), null);
+            graphics2D.drawImage(tiles.get(i).getImage(), 0, (GamePanel.getOriginalTileSize() * i), gamePanel.getScreenWidth(), GamePanel.getOriginalTileSize(), null);
 
             if (countDraw == 4 && i == (IMAGES_NUMB - 1)){
                 Tile tile = tiles.get(i);

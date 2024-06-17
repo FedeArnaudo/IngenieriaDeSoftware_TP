@@ -1,5 +1,3 @@
-package main.java;
-
 import javax.swing.*;
 
 public class Main {
@@ -9,7 +7,11 @@ public class Main {
         window.setResizable(false);
         window.setTitle("My Game SpaceShips");
 
-        GamePanel gamePanel = new GamePanel();
+        GamePanelImageManager imageManager = new GamePanelImageManager();
+        GamePanelSoundManager soundManager = new GamePanelSoundManager();
+        GamePanelDrawManager drawManager = new GamePanelDrawManager();
+        GamePanelStateManager stateManager = new GamePanelStateManager();
+        GamePanel gamePanel = new GamePanel(imageManager, soundManager, drawManager, stateManager);
         window.add(gamePanel);
 
         window.pack();

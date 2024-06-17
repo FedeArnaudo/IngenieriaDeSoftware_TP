@@ -1,29 +1,31 @@
-package main.java;
-
 public class SingleBulletStrategy implements ShootingStrategy {
     @Override
     public void shoot(Ship ship) {
         ship.increaseBulletFired(1);
-        ship.bullets.get(ship.getBulletFired()-1).setShootFlag(true);
+        int bulletIndex = ship.getBulletFired() - 1;
+        ship.getBullets().get(bulletIndex).setShoot(true);
         ship.getSingleShootSound().play();
     }
 
     @Override
     public void handleShooting(Ship ship) {
-        if (ship.keyHandler.getSpacePressed()) {
-            if (ship.getBulletFired() < ship.getBulletsCapacity() && ship.keyHandler.isBulletNotFiredInCurrentKeyPress()) {
+        if (ship.getKeyHandler().isSpacePressed()) {
+            boolean canShoot = ship.getBulletFired() < ship.getBulletsCapacity();
+            boolean bulletNotFired = ship.getKeyHandler().isBulletNotFiredInCurrentKeyPress();
+
+            if (canShoot && bulletNotFired) {
                 shoot(ship);
-                ship.keyHandler.setBulletFiredInCurrentKeyPress(true); // set the flag to true after a bullet is fired
-            } else if (!(ship.getBulletFired() < ship.getBulletsCapacity()) && ship.keyHandler.isBulletNotFiredInCurrentKeyPress()){
+                ship.getKeyHandler().setBulletFiredInCurrentKeyPress(true);
+            } else if (!canShoot && bulletNotFired) {
                 ship.getEmptySound().play();
-                ship.keyHandler.setBulletFiredInCurrentKeyPress(true);
+                ship.getKeyHandler().setBulletFiredInCurrentKeyPress(true);
             }
         }
     }
 
     @Override
     public void updateBullets(Ship ship) {
-        for (Bullet bullet: ship.bullets){
+        for (Bullet bullet : ship.getBullets()) {
             bullet.update();
         }
     }

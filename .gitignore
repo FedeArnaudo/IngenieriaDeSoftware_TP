@@ -1,0 +1,50 @@
+# Maven specific files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.swp
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# Compiled bytecode
+*.class
+
+# Other IDEs and Tools
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+# VS Code
+.vscode/
+
+# Maven Wrapper files
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Windows specific files
+*.bat
+*.cmd

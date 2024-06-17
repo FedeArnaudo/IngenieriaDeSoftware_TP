@@ -1,25 +1,31 @@
-package main.java;
-
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Sound {
-    private final Clip clip;
+    private final String soundFileName;
+    private static final Logger LOGGER = Logger.getLogger(Sound.class.getName());
 
     public Sound(String soundFileName) {
-        try {
-            URL url = this.getClass().getClassLoader().getResource(soundFileName);
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
-            clip = AudioSystem.getClip();
-            clip.open(audioIn);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            throw new RuntimeException("Could not play sound", e);
-        }
+        this.soundFileName = soundFileName;
     }
 
     public void play() {
-        clip.setFramePosition(0); // rewind to the beginning
-        clip.start(); // Start playing
+        try {
+            URL url = this.getClass().getClassLoader().getResource(soundFileName);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    event.getLine().close();
+                }
+            });
+            clip.start(); // Start playing
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            LOGGER.log(Level.SEVERE, "Could not play sound", e);
+        }
     }
 }

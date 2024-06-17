@@ -1,42 +1,40 @@
-package main.java;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed, enterPressed, pPressed, wPressed, bulletFiredInCurrentKeyPress;
+    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed, enterPressed, pPressed, bulletFiredInCurrentKeyPress;
 
     @Override
     public void keyTyped(KeyEvent e) {
+        // Not used
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
 
-        if(code == KeyEvent.VK_LEFT){
-            leftPressed = true;
-        }
-        if(code == KeyEvent.VK_RIGHT){
-            rightPressed = true;
-        }
-        if (code == KeyEvent.VK_UP) {
-            upPressed = true;
-        }
-        if (code == KeyEvent.VK_DOWN) {
-            downPressed = true;
-        }
-        if(code == KeyEvent.VK_SPACE){
-            spacePressed = true;
-        }
-        if(code == KeyEvent.VK_ENTER){
-            enterPressed = true;
-        }
-        if(code == KeyEvent.VK_P){
-            pPressed = true;
-        }
-        if(code == KeyEvent.VK_W){
-            wPressed = true;
+        switch (code) {
+            case KeyEvent.VK_LEFT:
+                leftPressed = true;
+                break;
+            case KeyEvent.VK_RIGHT:
+                rightPressed = true;
+                break;
+            case KeyEvent.VK_UP:
+                upPressed = true;
+                break;
+            case KeyEvent.VK_DOWN:
+                downPressed = true;
+                break;
+            case KeyEvent.VK_SPACE:
+                spacePressed = true;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPressed = true;
+                break;
+            case KeyEvent.VK_P:
+                pPressed = true;
+                break;
         }
     }
 
@@ -44,63 +42,53 @@ public class KeyHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
 
-        if(code == KeyEvent.VK_LEFT){
-            leftPressed = false;
-        }
-        if(code == KeyEvent.VK_RIGHT){
-            rightPressed = false;
-        }
-        if (code == KeyEvent.VK_UP) {
-            upPressed = false;
-        }
-        if (code == KeyEvent.VK_DOWN) {
-            downPressed = false;
-        }
-        if(code == KeyEvent.VK_SPACE){
-            spacePressed = false;
-            bulletFiredInCurrentKeyPress = false;
-        }
-        if(code == KeyEvent.VK_ENTER){
-            enterPressed = false;
-        }
-        if(code == KeyEvent.VK_P){
-            pPressed = false;
-        }
-        if(code == KeyEvent.VK_W){
-            wPressed = false;
+        switch (code) {
+            case KeyEvent.VK_LEFT:
+                leftPressed = false;
+                break;
+            case KeyEvent.VK_RIGHT:
+                rightPressed = false;
+                break;
+            case KeyEvent.VK_UP:
+                upPressed = false;
+                break;
+            case KeyEvent.VK_DOWN:
+                downPressed = false;
+                break;
+            case KeyEvent.VK_SPACE:
+                spacePressed = false;
+                bulletFiredInCurrentKeyPress = false;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPressed = false;
+                break;
+            case KeyEvent.VK_P:
+                pPressed = false;
+                break;
         }
     }
-
-    public boolean  getLeftPressed() {
+    public boolean isLeftPressed() {
         return leftPressed;
     }
 
-    public boolean  getRightPressed() {
+    public boolean isRightPressed() {
         return rightPressed;
     }
 
-    public boolean  getUpPressed() {
-        return upPressed;
-    }
+    public boolean isUpPressed() { return upPressed; }
 
-    public boolean  getDownPressed() {
-        return downPressed;
-    }
+    public boolean isDownPressed() { return downPressed; }
 
-    public boolean  getSpacePressed() {
+    public boolean isSpacePressed() {
         return spacePressed;
     }
 
-    public boolean  getEnterPressed() {
+    public boolean isEnterPressed() {
         return enterPressed;
     }
 
-    public boolean  getPPressed() {
+    public boolean isPPressed() {
         return pPressed;
-    }
-
-    public boolean getWPressed() {
-        return wPressed;
     }
 
     public boolean isBulletNotFiredInCurrentKeyPress() {
@@ -115,11 +103,5 @@ public class KeyHandler implements KeyListener {
         this.pPressed = pPressed;
     }
 
-    public void setWPressed(boolean wPressed) {
-        this.wPressed = wPressed;
-    }
-
-    public void setBulletFiredInCurrentKeyPress(boolean bulletFiredInCurrentKeyPress) {
-        this.bulletFiredInCurrentKeyPress = bulletFiredInCurrentKeyPress;
-    }
+    public void setBulletFiredInCurrentKeyPress(boolean bulletFiredInCurrentKeyPress) { this.bulletFiredInCurrentKeyPress = bulletFiredInCurrentKeyPress; }
 }
