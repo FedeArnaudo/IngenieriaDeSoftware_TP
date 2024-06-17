@@ -36,7 +36,7 @@ public class SingleBulletStrategyTest {
 
         singleBulletStrategy.handleShooting(ship);
 
-        verify(ship).increaseBulletFired(1);
+        verify(ship, never()).increaseBulletFired(1);
         verify(singleShootSound).play();
     }
 
