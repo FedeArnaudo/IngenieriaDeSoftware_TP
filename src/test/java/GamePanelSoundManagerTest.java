@@ -37,7 +37,7 @@ public class GamePanelSoundManagerTest {
 
         gamePanelSoundManager.startBackgroundMusic();
 
-        verify(sound).play();
+        verify(sound,times(1)).play();
     }
 
     @Test
