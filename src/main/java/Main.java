@@ -7,10 +7,11 @@ public class Main {
         window.setResizable(false);
         window.setTitle("My Game SpaceShips");
 
-        GamePanelImageManager imageManager = new GamePanelImageManager();
-        GamePanelSoundManager soundManager = new GamePanelSoundManager();
-        GamePanelDrawManager drawManager = new GamePanelDrawManager();
-        GamePanelStateManager stateManager = new GamePanelStateManager();
+        GamePanelImageManager imageManager = GamePanelImageManager.getInstanceGamePanelImageManager();
+        GamePanelSoundManager soundManager = GamePanelSoundManager.getInstanceGamePanelSoundManager();
+        GamePanelDrawManager drawManager = GamePanelDrawManager.getInstanceGamePanelDrawManager();
+        GamePanelStateManager stateManager = GamePanelStateManager.getInstanceGamePanelStateManager();
+
         GamePanel gamePanel = new GamePanel(imageManager, soundManager, drawManager, stateManager);
         window.add(gamePanel);
 

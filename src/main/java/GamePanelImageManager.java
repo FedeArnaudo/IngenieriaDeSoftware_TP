@@ -13,6 +13,14 @@ public class GamePanelImageManager {
     private static final String BULLET_SCOREBOARD_PATH = "scoreboard/bullet_scoreboard.png";
     private static final String LIVE_IMAGE_PATH = "lives/live.png";
     private static final String COOLING_IMAGE_PATH = "cooling/cooling_icon.png";
+    private static final GamePanelImageManager instance = new GamePanelImageManager();
+
+    private GamePanelImageManager(){
+
+    }
+    public static GamePanelImageManager getInstanceGamePanelImageManager(){
+        return instance;
+    }
 
     public void attachToGamePanel(GamePanel gamePanel) {
         this.gamePanel = gamePanel;

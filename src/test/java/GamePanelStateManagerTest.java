@@ -15,7 +15,7 @@ public class GamePanelStateManagerTest {
         ship = mock(Ship.class);
         when(gamePanel.getKeyHandler()).thenReturn(keyHandler);
         when(gamePanel.getShip()).thenReturn(ship);
-        gamePanelStateManager = new GamePanelStateManager();
+        gamePanelStateManager = GamePanelStateManager.getInstanceGamePanelStateManager();
         gamePanelStateManager.attachToGamePanel(gamePanel);
     }
 

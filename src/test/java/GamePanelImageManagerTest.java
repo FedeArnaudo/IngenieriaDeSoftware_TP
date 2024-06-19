@@ -13,7 +13,7 @@ public class GamePanelImageManagerTest {
     @BeforeEach
     public void setup() {
         gamePanel = mock(GamePanel.class);
-        gamePanelImageManager = new GamePanelImageManager();
+        gamePanelImageManager = GamePanelImageManager.getInstanceGamePanelImageManager();
         gamePanelImageManager.attachToGamePanel(gamePanel);
     }
 

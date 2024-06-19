@@ -56,7 +56,7 @@ public class GamePanelDrawManagerTest {
 
 
 
-        gamePanelDrawManager = new GamePanelDrawManager();
+        gamePanelDrawManager = GamePanelDrawManager.getInstanceGamePanelDrawManager();
         gamePanelDrawManager.attachToGamePanel(gamePanel);
     }
 

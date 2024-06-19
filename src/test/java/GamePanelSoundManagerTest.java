@@ -16,7 +16,7 @@ public class GamePanelSoundManagerTest {
         gamePanel = mock(GamePanel.class);
         keyHandler = mock(KeyHandler.class);
         sound = mock(Sound.class);
-        gamePanelSoundManager = new GamePanelSoundManager();
+        gamePanelSoundManager = GamePanelSoundManager.getInstanceGamePanelSoundManager();
         gamePanelSoundManager.attachToGamePanel(gamePanel);
     }
 
