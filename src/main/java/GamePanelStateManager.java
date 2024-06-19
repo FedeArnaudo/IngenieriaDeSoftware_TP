@@ -5,10 +5,13 @@ public class GamePanelStateManager {
     private GamePanel gamePanel;
     private final Random randomMeteorSpeed;
     private int lastScore;
-
-    public GamePanelStateManager() {
+    private static GamePanelStateManager instance = new GamePanelStateManager();
+    private GamePanelStateManager(){
         randomMeteorSpeed = new Random();
         lastScore = 0;
+    }
+    public static GamePanelStateManager getInstanceGamePanelStateManager(){
+        return instance;
     }
 
     public void attachToGamePanel(GamePanel gamePanel) {

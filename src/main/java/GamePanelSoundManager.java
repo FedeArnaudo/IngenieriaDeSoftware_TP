@@ -6,7 +6,14 @@ public class GamePanelSoundManager {
     private GamePanel gamePanel;
     Clip backgroundMusic;
     Clip pauseMusic;
+    private static final GamePanelSoundManager instance = new GamePanelSoundManager();
 
+    private GamePanelSoundManager(){
+
+    }
+    public static GamePanelSoundManager getInstanceGamePanelSoundManager(){
+        return instance;
+    }
     public void attachToGamePanel(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }

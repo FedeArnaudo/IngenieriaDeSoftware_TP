@@ -8,11 +8,14 @@ public class GamePanelDrawManager {
     private final Font arialFont;
     private final Font courierFont;
     private int dotCounter;
-
-    public GamePanelDrawManager() {
+    private static GamePanelDrawManager instance = new GamePanelDrawManager();
+    private GamePanelDrawManager(){
         this.arialFont = new Font("Arial", Font.PLAIN, 24);
         this.courierFont = new Font("Courier New", Font.PLAIN, 20);
         this.dotCounter = 1;
+    }
+    public static GamePanelDrawManager getInstanceGamePanelDrawManager(){
+        return instance;
     }
 
     public void attachToGamePanel(GamePanel gamePanel) {
